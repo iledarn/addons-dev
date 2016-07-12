@@ -15,7 +15,7 @@ class BaseLimitRecordsNumber(models.Model):
 
     _defaults = {
         'kind': 'on_create_or_write',
-        'domain': "[('active','=',True)]"
+        'domain': "[]"
     }
 
     @api.model
