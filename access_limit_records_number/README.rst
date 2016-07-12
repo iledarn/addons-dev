@@ -2,7 +2,7 @@
  Limit number of records for arbitrary model
 =============================================
 
-With this module you can limit number of records for any model.
+With this module you can limit number of records for any model in specified domain.
 For examle, you can restrict number of vehicles in fleet_vehicle, say by three.
 If users try to create more then three vehicles then exception occurs.
 

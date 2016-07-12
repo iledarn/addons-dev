@@ -1,8 +1,8 @@
 <section class="oe_container">
     <div class="oe_row oe_spaced">
         <div class="oe_span12">
-            <h2 class="oe_slogan">Limit number of records for arbitrary model</h2>
-            <h3 class="oe_slogan">Limit number of records for arbitrary model</h3>
+            <h2 class="oe_slogan">Limited number of records</h2>
+            <h3 class="oe_slogan">e.g. limit number of users by three</h3>
         </div>
     </div>
 </section>
@@ -12,36 +12,15 @@
             <p class="oe_mt32">
               With this module you can limit number of records for any model.
               For examle, you can restrict number of vehicles in fleet_vehicle, say by three.
-              If users try to create more then three vehicles then exception occurs.
-              
-              This module uses base.action.rule to restrict number of records.
-              And also there is new model base.limit.records_number to strore the settings.
-              
-              To do new settings to restrict number of records in any model
-              the user should be a member of ``Control limits on records number`` security group.
             </p>
         </div>
         <div class="oe_row_img oe_centered">
              <img class="oe_demo oe_picture oe_screenshot" src="access_limit_number_app_page.png"/>
          </div>
         <div class="oe_span12">
-          <h4>Usage</h4>
-          <ul>
-            <li>In debug mode open <em>Settings / Users / Groups</em></li>
-            <li>Find there <em>Limit records number / Control limits on records number</em> group and add your user in the group</li>
-            <li>Open <em>Settings / Technical / Security / Records Number Limits</em> menu</li>
-            <li>Create new recorod. For exapmle
-              <ul>
-                <li>Model: Information on a vehicle</li>
-                <li>Domain: []</li>
-                <li>Maximum Records: 3</li>
-              </ul>
-            </li>
-            <li>Save the record</li>
-            <li>Try to create more than three vehicles from <em>Fleet / Vehicles / Vehicles</em>. When you try to create more than three vehicles then you see an exception message.
-              The system doesn't allow you create more than three records.
-            </li>
-          </ul>
+          <p class="oe_mt32">
+            If users try to create more then three vehicles then exception occurs.
+          </p>
         </div> 
         <div class="oe_row_img oe_centered">
           <img class="oe_demo oe_picture oe_screenshot" src="vehicle_limit_number_of_records.png"/>

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
-    "name": """Limit for tables""",
-    "summary": """Module allow limit records of the table""",
+    "name": """Limited number of records""",
+    "summary": """e.g. limit number of users by three""",
     "category": "Extra tools",
     "images": [],
     "version": "1.0.0",
