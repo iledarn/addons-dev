@@ -5,6 +5,8 @@
 Usage
 =====
 
+* In debug mode open ``Settings / Users / Groups``
+* Find there ``Limit records number / Control limits on records number`` group and add your user in the group.
 * Open ``Settings / Technical / Security / Records Number Limits`` menu
 * Create new recorod. For exapmle:
 
