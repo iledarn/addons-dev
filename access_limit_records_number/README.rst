@@ -3,8 +3,8 @@
 =============================================
 
 With this module you can limit number of records for any model.
-For examle, you can restrict number of vehicles in fleet_vehicle, say by ten.
-If users try to create more then ten vehicles then exception occurs.
+For examle, you can restrict number of vehicles in fleet_vehicle, say by three.
+If users try to create more then three vehicles then exception occurs.
 
 This module uses base.action.rule to restrict number of records.
 And also there is new model base.limit.records_number to strore the settings.
