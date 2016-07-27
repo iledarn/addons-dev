@@ -193,9 +193,9 @@
               <group>
                 <group col="2" string="Vehicle Information">
                   <field name="user_branch_id" invisible="True"/>
-                  <field name="daily_rental_price"/>
-                  <field name="rate_per_extra_km"/>
-                  <field name="allowed_kilometer_per_day"/>
+                  <field name="daily_rental_price" attrs="{'readonly': [('state', 'in', ('confirmed','cancel'))]}"/>
+                  <field name="rate_per_extra_km" attrs="{'readonly': [('state', 'in', ('confirmed','cancel'))]}"/>
+                  <field name="allowed_kilometer_per_day" attrs="{'readonly': [('state', 'in', ('confirmed','cancel'))]}"/>
                   <field name="odometer_before"/>
                   <field name="exit_datetime" class="oe_inline" attrs="{'readonly': [('state', 'in', ('confirmed','cancel'))]}"/>
                   <field name="return_datetime" class="oe_inline" string="Original return time" attrs="{'readonly': [('state', 'in', ('confirmed','cancel'))]}"/>
@@ -204,10 +204,10 @@
                   <field name="other_extra_charges" class="oe_inline" attrs="{'readonly': [('state', 'in', ('confirmed','cancel'))]}"/>
                 </group>
                 <group col="2" string="Payment Details">
-                  <field name="period_rent_price" class="oe_inline"/>
-                  <field name="extra_driver_charge" class="oe_inline"/>
-                  <field name="total_rent_price" class="oe_inline"/>
-                  <field name="total_rental_period" class="oe_inline"/>
+                  <field name="period_rent_price" class="oe_inline" attrs="{'readonly': [('state', 'in', ('confirmed','cancel'))]}"/>
+                  <field name="extra_driver_charge" class="oe_inline" attrs="{'readonly': [('state', 'in', ('confirmed','cancel'))]}"/>
+                  <field name="total_rent_price" class="oe_inline" attrs="{'readonly': [('state', 'in', ('confirmed','cancel'))]}"/>
+                  <field name="total_rental_period" class="oe_inline" attrs="{'readonly': [('state', 'in', ('confirmed','cancel'))]}"/>
                   <field name="advanced_deposit" class="oe_inline"/>
                   <field name="balance" class="oe_inline"/>
                 </group>
