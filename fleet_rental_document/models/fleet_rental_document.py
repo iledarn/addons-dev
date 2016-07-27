@@ -9,6 +9,7 @@ import base64
 from lxml import etree
 import os
 from wand.image import Image
+from openerp.exceptions import AccessError, UserError
 
 
 class FleetRentalDocument(models.Model):
@@ -62,6 +63,16 @@ class FleetRentalDocument(models.Model):
 
     png_file = fields.Text('PNG', compute='_compute_png', store=False)
 
+    @api.one
+    @api.constrains('exit_datetime', 'return_datetime')
+    def _check_return_date(self):
+        start = datetime.strptime(self.exit_datetime, DTF)
+        end = datetime.strptime(self.return_datetime, DTF)
+        delta = (end - start).days
+        total_rental_period = end.day - start.day if delta == 0 else delta
+        if total_rental_period < 1:
+            raise UserError('Return date cannot be set before or the same as Exit Date.')
+
     @api.multi
     def _compute_png(self):
         for rec in self:
@@ -107,7 +118,8 @@ class FleetRentalDocument(models.Model):
             if record.exit_datetime and record.return_datetime:
                 start = datetime.strptime(record.exit_datetime, DTF)
                 end = datetime.strptime(record.return_datetime, DTF)
-                record.total_rental_period = (end - start).days
+                delta = (end - start).days
+                record.total_rental_period = end.day - start.day if delta == 0 else delta
             record.period_rent_price = record.total_rental_period * record.daily_rental_price
             record.total_rent_price = record.period_rent_price + record.extra_driver_charge + record.other_extra_charges
             record.extra_driver_charge = record.total_rental_period * record.extra_driver_charge_per_day
