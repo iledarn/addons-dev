@@ -64,13 +64,9 @@ class FleetRentalDocument(models.Model):
     png_file = fields.Text('PNG', compute='_compute_png', store=False)
 
     @api.one
-    @api.constrains('exit_datetime', 'return_datetime')
+    @api.constrains('total_rental_period')
     def _check_return_date(self):
-        start = datetime.strptime(self.exit_datetime, DTF)
-        end = datetime.strptime(self.return_datetime, DTF)
-        delta = (end - start).days
-        total_rental_period = end.day - start.day if delta == 0 else delta
-        if total_rental_period < 1:
+        if self.total_rental_period < 1:
             raise UserError('Return date cannot be set before or the same as Exit Date.')
 
     @api.multi
