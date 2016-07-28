@@ -2,7 +2,7 @@
 <openerp>
   <data noupdate="0">
 
-    <record id="fleet_user_contract_visibility" model="ir.rule">
+    <record id="fleet_rental_document_deletion" model="ir.rule">
       <field name="name">Only draft rent documents can be deleted</field>
       <field name="model_id" ref="model_fleet_rental_document_rent"/>
       <field name="perm_read" eval="False"/>
