@@ -35,7 +35,7 @@ class Person(models.Model):
         return True
 
     _constraints = [
-        (check_age, 'Age restriction. Person must be elder than 20.', ['birthdate_date']),
+        (check_age, 'Age restriction. Person must be elder than 21.', ['birthdate_date']),
     ]
 
 
