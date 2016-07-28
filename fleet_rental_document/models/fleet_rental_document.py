@@ -27,7 +27,7 @@ class FleetRentalDocument(models.Model):
         help="Reference of the document that produced this document.",
         readonly=True, states={'draft': [('readonly', False)]})
 
-    partner_id = fields.Many2one('res.partner', string="Customer", domain=[('customer', '=', True), ('blocked', '=', False)], required=True)
+    partner_id = fields.Many2one('res.partner', string="Customer", domain=[('customer', '=', True)], required=True)
 
     vehicle_id = fields.Many2one('fleet.vehicle', string="Vehicle", required=True)
     account_move_ids = fields.One2many('account.move', 'fleet_rental_document_id', string='Entries', readonly=True)
@@ -68,6 +68,16 @@ class FleetRentalDocument(models.Model):
     def _check_return_date(self):
         if self.total_rental_period < 1:
             raise UserError('Return date cannot be set before or the same as Exit Date.')
+
+    @api.one
+    @api.constrains('partner_id')
+    def _check_partner(self):
+        if self.partner_id.blocked == True:
+            reason = self.env['sale_membership.log'].search([('partner_id', '=', self.partner_id.id),
+                                                            ('blocked', '=', True)],
+                                                           order='create_date desc',
+                                                           limit=1).reason
+            raise UserError('The customer %s is blocked for this reason: %s.' % (self.partner_id.name, reason))
 
     @api.multi
     def _compute_png(self):
