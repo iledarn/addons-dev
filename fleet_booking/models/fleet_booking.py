@@ -16,23 +16,18 @@ class Person(models.Model):
         [(u'National Id', u'National Id'), (u'Iqama', u'Iqama'),
          (u'Passport', u'Passport')],
         string='ID Type',
-        required=True
         )
-    birthdate_date = fields.Date(required=True)
-    nationality_id = fields.Many2one(required=True)
-    passport = fields.Char(required=True)
 
     issuer = fields.Char(string='Issuer string')
     issuer_date = fields.Date(string='Date of Issue')
     license_type = fields.Selection([(u'Private', u'Private'),
                                      (u'General', u'General'),
                                      (u'International', u'International')],
-                                    string='License Type', required=True)
-    license_number = fields.Char(string='License Number', required=True)
-    license_expiry_date = fields.Date(string='License Expiry Date', required=True)
-    third_name = fields.Char(string='Third Name', required=True)
-    family_name = fields.Char(string='Family Name', required=True)
-    mobile =  fields.Char(required=True)
+                                    string='License Type')
+    license_number = fields.Char(string='License Number')
+    license_expiry_date = fields.Date(string='License Expiry Date')
+    third_name = fields.Char(string='Third Name')
+    family_name = fields.Char(string='Family Name')
 
     emergency_contact_name = fields.Char(string='Name')
     emergency_contact_relation = fields.Char(string='Relation')
@@ -66,6 +61,7 @@ class Vehicle(models.Model):
     asset_id = fields.Many2one('account.asset.asset', compute='compute_asset', inverse='asset_inverse', string='Asset')
     asset_ids = fields.One2many('account.asset.asset', 'vehicle_id')
     # TODO Rename deprecation to depreciation
+    state_id = fields.Many2one('fleet.vehicle.state', readonly=True, ondelete="restrict")
 
     @api.one
     @api.depends('asset_ids')
