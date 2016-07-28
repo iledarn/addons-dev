@@ -16,17 +16,28 @@ class Person(models.Model):
         [(u'National Id', u'National Id'), (u'Iqama', u'Iqama'),
          (u'Passport', u'Passport')],
         string='ID Type',
+        required=True
         )
+    birthdate_date = fields.Date(required=True)
+    nationality_id = fields.Many2one(required=True)
+    passport = fields.Char(required=True)
+
     issuer = fields.Char(string='Issuer string')
     issuer_date = fields.Date(string='Date of Issue')
     license_type = fields.Selection([(u'Private', u'Private'),
                                      (u'General', u'General'),
                                      (u'International', u'International')],
-                                    string='License Type')
-    license_number = fields.Char(string='License Number')
-    license_expiry_date = fields.Date(string='License Expiry Date')
-    third_name = fields.Char(string='Third Name')
-    family_name = fields.Char(string='Family Name')
+                                    string='License Type', required=True)
+    license_number = fields.Char(string='License Number', required=True)
+    license_expiry_date = fields.Date(string='License Expiry Date', required=True)
+    third_name = fields.Char(string='Third Name', required=True)
+    family_name = fields.Char(string='Family Name', required=True)
+    mobile =  fields.Char(required=True)
+
+    emergency_contact_name = fields.Char(string='Name')
+    emergency_contact_relation = fields.Char(string='Relation')
+    emergency_contact_phone = fields.Char(string='Phone number')
+    emergency_contact_mobile = fields.Char(string='Mobile number')
 
     def check_age(self, cr, uid, ids, context=None, parent=None):
         for r in self.browse(cr, uid, ids, context=context):
