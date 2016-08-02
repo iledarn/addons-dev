@@ -215,7 +215,7 @@
                 </group>
               </group>
               <group string="Additional Drivers">
-                  <field name="additional_driver_ids" mode="tree" nolabel="1">
+                  <field name="additional_driver_ids" mode="tree" nolabel="1" widget='one2many'>
                     <tree string="Contacts in emergency cases" editable="bottom">
                       <field name="name"/>
                       <field name="license_type_id"/>
