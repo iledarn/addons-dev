@@ -30,6 +30,7 @@ class FleetRentalDocumentRent(models.Model):
             string='Related Document', ondelete='restrict',
             help='common part of all three types of the documents', auto_join=True)
 
+    additional_driver_ids = fields.Many2many('fleet_rental.additional_driver')
     user_branch_id = fields.Many2one('fleet_branch.branch', default=lambda self: self.env.user.branch_id.id)
 
     document_return_id = fields.Many2one('fleet_rental.document_return')

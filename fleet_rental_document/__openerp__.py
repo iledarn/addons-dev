@@ -36,6 +36,7 @@
         "views/ir_sequence.xml",
         "data/svg_vehicle_part.xml",
         "data/items_to_check.xml",
+        "data/personal.xml",
         'rent_report.xml',
         'views/report_rent.xml',
     ],

@@ -14,15 +14,6 @@ class PersonalIdentificationType(models.Model):
     error_message = fields.Char(string='Error message')
 
 
-class PersonalDriveLicenseType(models.Model):
-    _name = 'personal.drive_license_type'
-
-    name = fields.Char(string='License Type', required=True)
-
-    regexp_force = fields.Char(string='Regexp Force', default='.*')
-    error_message = fields.Char(string='Error message')
-
-
 class PersonalEmergencyContact(models.Model):
     _name = 'personal.emergency_contact'
 
@@ -33,8 +24,9 @@ class PersonalEmergencyContact(models.Model):
     partner_id = fields.Many2one('res.partner')
 
 
-class Person(models.Model):
-    _inherit = 'res.partner'
+class ResPartner(models.Model):
+    _inherit = ['res.partner', 'personal.drive_license']
+    _name = "res.partner"
 
     nationality_id = fields.Many2one('res.country', string='Nationality')
     birthdate_date = fields.Date(string='Birthdate')
@@ -42,12 +34,8 @@ class Person(models.Model):
 
     identification_type_id = fields.Many2one('personal.identification_type', string='Identification Type')
     identification_number = fields.Char('Identification Number')
-    issuer = fields.Char(string='Issuer string')
+    issuer = fields.Char(string='Issuer')
     issuer_date = fields.Date(string='Date of Issue')
-
-    license_type_id = fields.Many2one('personal.drive_license_type', string='Drive License Type')
-    license_number = fields.Char(string='Drive License Number')
-    license_expiry_date = fields.Date(string='Drive License Expiry Date')
 
     firstname = fields.Char(string='First Name')
     secondname = fields.Char(string='Second Name')
