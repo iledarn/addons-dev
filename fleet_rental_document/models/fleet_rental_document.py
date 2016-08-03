@@ -190,6 +190,8 @@ class FleetRentalDocument(models.Model):
             if record.exit_datetime and record.return_datetime:
                 start = datetime.strptime(record.exit_datetime, DTF)
                 end = datetime.strptime(record.return_datetime, DTF)
+                delta = (end - start).days
+                record.total_rental_period = end.day - start.day if delta == 0 else delta
                 record.total_rental_period = (end - start).days
 
     @api.onchange('exit_datetime', 'return_datetime')
