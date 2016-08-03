@@ -17,12 +17,25 @@
             <div class="col-xs-4">
               <p>Customer name: <span t-field="doc.partner_id.name"/></p>
               <p>Nationality: <span t-field="doc.partner_id.nationality_id"/></p>
+              <p>Issuer: <span t-field="doc.partner_id.issuer"/></p>
+              <p>License Number: <span t-field="doc.partner_id.license_number"/></p>
+              <p>Mobile: <span t-field="doc.partner_id.mobile"/></p>
+              <p>Work Address: <span t-field="doc.partner_id.parent_id.street"/></p>
             </div>
             <div class="col-xs-4">
               <p>Customer membership number: <span t-field="doc.partner_id.id"/></p>
+              <p>Customer ID Number: <span t-field="doc.partner_id.identification_number"/></p>
+              <p>Date of Issue: <span t-field="doc.partner_id.issuer_date"/></p>
+              <p>License Expiry Date: <span t-field="doc.partner_id.license_expiry_date"/></p>
+              <p>Phone: <span t-field="doc.partner_id.phone"/></p>
+              <p>Work Phone number: <span t-field="doc.partner_id.work_phone"/></p>
             </div>
             <div class="col-xs-4">
               <p>Membership Type: <span t-field="doc.partner_id.type_id.name"/></p>
+              <p>ID Type: <span t-field="doc.partner_id.identification_type_id"/></p>
+              <p>License Type: <span t-field="doc.partner_id.license_type_id"/></p>
+              <p>Date Of Birth: <span t-field="doc.partner_id.birthdate_date"/></p>
+              <p>Home Address: <span t-field="doc.partner_id.street"/></p>
             </div>
           </div>
           <div class="row">
@@ -97,6 +110,41 @@
                     <td><span t-att-class="check_line.exit_check_yes and 'glyphicon glyphicon-ok' or check_line.exit_check_no and 'glyphicon glyphicon-remove' or None"/></td>
                   </t>
                 </tr>
+              </tbody>
+            </table>
+          </div>
+          <div t-if="doc.additional_driver_ids" class="row">
+            <h4>Additional Drivers</h4>
+            <table class="table table-condensed">
+              <thead>
+                <tr>
+                  <th>Driver Name</th>
+                  <th>License Type</th>
+                  <th>License Number</th>
+                  <th>Issuer</th>
+                  <th>License Expiry Date</th>
+                </tr>
+              </thead>
+              <tbody>
+                <t t-foreach="doc.additional_driver_ids" t-as="driver">
+                  <tr>
+                    <td>
+                      <span t-field="driver.name"/>
+                    </td>
+                    <td>
+                      <span t-field="driver.license_type_id"/>
+                    </td>
+                    <td>
+                      <span t-field="driver.license_number"/>
+                    </td>
+                    <td>
+                      <span t-field="driver.issuer"/>
+                    </td>
+                    <td>
+                      <span t-field="driver.license_expiry_date"/>
+                    </td>
+                  </tr>
+                </t>
               </tbody>
             </table>
           </div>
