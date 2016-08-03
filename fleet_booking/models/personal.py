@@ -46,6 +46,12 @@ class ResPartner(models.Model):
 
     emergency_contact_ids = fields.One2many('personal.emergency_contact', 'partner_id')
 
+    @api.model
+    def _get_default_reference(self):
+        return self.env['ir.sequence'].get('res.partner')
+
+    ref = fields.Char(default=_get_default_reference)
+
     @api.one
     @api.onchange('firstname', 'secondname')
     @api.constrains('firstname', 'secondname')
