@@ -156,7 +156,6 @@
               <button name="print_rent" string="Print" type="object"
                       attrs="{'invisible': [('state', 'in', ['draft', 'booked'])]}"/>
               <button name="action_create_return" states="confirmed,extended" string="Create Return Document" type="object"/>
-              <button name="action_cancel_return" states="returned" string="Cancel Return" type="object"/>
               <field name="state" widget="statusbar" statusbar_visible="draft,booked,confirmed,extended,returned"/>
             </header>
             <sheet>
