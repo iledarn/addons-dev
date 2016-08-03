@@ -208,7 +208,7 @@
                   <field name="period_rent_price" class="oe_inline" attrs="{'readonly': [('state', 'not in', ('draft','booked'))]}"/>
                   <field name="extra_driver_charge" class="oe_inline" attrs="{'readonly': [('state', 'not in', ('draft','booked'))]}"/>
                   <field name="total_rent_price" class="oe_inline" attrs="{'readonly': [('state', 'not in', ('draft','booked'))]}"/>
-                  <field name="total_rental_period" class="oe_inline" attrs="{'readonly': [('state', 'not in', ('draft','booked'))]}"/>
+                  <field name="total_rental_period" class="oe_inline"/>
                   <field name="advanced_deposit" class="oe_inline"/>
                   <field name="balance" class="oe_inline"/>
                 </group>

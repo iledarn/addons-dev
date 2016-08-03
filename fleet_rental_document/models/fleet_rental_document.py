@@ -45,7 +45,7 @@ class FleetRentalDocument(models.Model):
     extend_return_datetime = fields.Datetime(string='Last extend return time', help='Last extend document return Date and Time', default=False, readonly=True)
     rent_return_datetime = fields.Datetime(string='Rent Return Date and Time')
 
-    total_rental_period = fields.Integer(string='Total Rental Period')
+    total_rental_period = fields.Integer(string='Total Rental Period', compute="_compute_total_rental_period", store=True, readonly=True)
     total_rent_price = fields.Float(string='Total Rent Price', digits_compute=dp.get_precision('Product Price'))
 
     period_rent_price = fields.Float(string='Period Rent Price', digits_compute=dp.get_precision('Product Price'))
