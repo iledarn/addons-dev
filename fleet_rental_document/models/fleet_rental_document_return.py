@@ -76,9 +76,11 @@ class FleetRentalDocumentReturn(models.Model):
         return result
 
     @api.multi
-    def action_open(self):
-        for rent in self:
-            rent.state = 'open'
+    def action_return_car(self):
+        for ret in self:
+            ret.state = 'open'
+            ret.document_rent_id.state = 'returned'
+            ret.vehicle_id = self.env.ref('fleet.vehicle_state_active')
 
     @api.multi
     def action_create_refund(self):

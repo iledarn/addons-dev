@@ -274,8 +274,6 @@ class FleetRentalDocumentRent(models.Model):
         document_return_obj = self.env['fleet_rental.document_return']
         for rent in self:
             rent.previous_state = rent.state
-            rent.state = 'returned'
-            self.vehicle_id.state_id = self.env.ref('fleet.vehicle_state_active')
             document_return = document_return_obj.create({
                'partner_id': rent.partner_id.id,
                'vehicle_id': rent.vehicle_id.id,
