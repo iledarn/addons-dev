@@ -20,7 +20,7 @@ class PersonalEmergencyContact(models.Model):
     name = fields.Char(string='Name')
     relation = fields.Char(string='Relation')
     phone = fields.Char(string='Phone number')
-    mobile = fields.Char(string='Mobile number')
+    mobile = fields.Char(string='Mobile number', required=True)
     partner_id = fields.Many2one('res.partner')
 
 
@@ -52,6 +52,12 @@ class ResPartner(models.Model):
     def build_name(self):
         if self.secondname and self.firstname:
             self.name = '%s %s' % (self.secondname or '', self.firstname or '')
+
+    @api.one
+    @api.constrains('emergency_contact_ids')
+    def _check_emergency_contact(self):
+        if self.customer and not len(self.emergency_contact_ids):
+            raise UserError('Should be at least one emergency contact')
 
     @api.one
     @api.onchange('identification_number', 'license_type_id')
