@@ -187,9 +187,9 @@
               </div>
 
               <group>
-                <field name="partner_id" attrs="{'readonly': [('state', 'not in', ('draft','booked'))]}"/>
+                <field name="partner_id" attrs="{'readonly': [('state', 'not in', ('draft'))]}"/>
                 <field name="vehicle_id" domain="[('state_id.name','=','Active'),('branch_id','=', user_branch_id)]"
-                       attrs="{'readonly': [('state', 'not in', ('draft','booked'))]}"/>
+                       attrs="{'readonly': [('state', 'not in', ('draft'))]}"/>
               </group>
               <group>
                 <group col="2" string="Vehicle Information">
