@@ -97,36 +97,6 @@ class FleetRentalDocument(models.Model):
             with Image(blob=etree.tostring(dom), format='svg') as img:
                 rec.png_file = base64.b64encode(img.make_blob('png'))
 
-    @api.depends('total_rent_price', 'account_move_lines_ids')
-    def _compute_balance(self):
-        return
-        # for record in self:
-        #     account_receivable = record.partner_id.property_account_receivable_id.id
-        #     if record.account_move_lines_ids:
-        #         record.account_move_lines_ids[0].move_id.fleet_rental_document_id = [(4, record.id)]
-        #     mutuals_recs = self.env['account.move.line'].search([('fleet_rental_document_id', '=', record.id), ('account_id', '=', account_receivable)])
-        #     total_duty = 0
-        #     total_paid = 0
-        #     for r in mutuals_recs:
-        #         total_duty += r.debit
-        #         total_paid += r.credit
-        #     record.balance = total_paid - total_duty
-        #     record.advanced_deposit = total_paid
-
-    @api.depends('vehicle_id')
-    def _compute_vehicle_rental(self):
-        for record in self:
-            record.allowed_kilometer_per_day = record.vehicle_id.allowed_kilometer_per_day
-            record.rate_per_extra_km = record.vehicle_id.rate_per_extra_km
-            record.daily_rental_price = record.vehicle_id.daily_rental_price
-            record.odometer_before = record.vehicle_id.odometer
-
-    @api.onchange('daily_rental_price', 'vehicle_id', 'exit_datetime', 'return_datetime', 'return_datetime', 'extra_driver_charge_per_day', 'other_extra_charges')
-    def all_calculations(self):
-        for record in self:
-            record.total_rent_price = record.period_rent_price + record.extra_driver_charge + record.other_extra_charges
-            record.extra_driver_charge = record.total_rental_period * record.extra_driver_charge_per_day
-
     @api.multi
     def action_view_invoice(self):
         invoice_ids = self.mapped('invoice_ids')
@@ -196,7 +166,6 @@ class FleetRentalDocument(models.Model):
     @api.multi
     @api.depends('partner_id.rental_deposit_analytic_account_id.line_ids.amount')
     def _compute_advanced_deposit(self):
-        # TODO: invokes three times on invoice validation. Think about minimize excessive calls
         for record in self:
             account_analytic = record.partner_id.rental_deposit_analytic_account_id
             if account_analytic:
