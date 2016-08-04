@@ -35,7 +35,7 @@ class FleetRentalDocument(models.Model):
     account_move_lines_ids = fields.One2many('account.move.line', 'fleet_rental_document_id', string='Entrie lines', readonly=True)
     allowed_kilometer_per_day = fields.Integer(string='Allowed kilometer per day')
     rate_per_extra_km = fields.Float(string='Rate per extra km')
-    daily_rental_price = fields.Float(string='Daily Rental Price')
+    daily_rental_price = fields.Float(string='Daily Rental Price', compute="_compute_vehicle_rental", store=True, readonly=True)
     odometer_before = fields.Float(string='Odometer', readonly=True, store=True)
 
     extra_driver_charge_per_day = fields.Float(string='Extra Driver Charge per day', digits_compute=dp.get_precision('Product Price'), default=0)
@@ -185,6 +185,7 @@ class FleetRentalDocument(models.Model):
         result['return_datetime'] = fields.Datetime.to_string(datetime.utcnow() + timedelta(days=1))
         return result
 
+    @api.multi
     @api.depends('exit_datetime', 'return_datetime')
     def _compute_total_rental_period(self):
         for record in self:
@@ -193,16 +194,8 @@ class FleetRentalDocument(models.Model):
                 end = datetime.strptime(record.return_datetime.split()[0], DEFAULT_SERVER_DATE_FORMAT)
                 record.total_rental_period = (end - start).days
 
-    @api.onchange('exit_datetime', 'return_datetime')
-    def _onchange_dates(self):
-        if self.exit_datetime and self.return_datetime:
-            start = datetime.strptime(self.exit_datetime, DTF)
-            end = datetime.strptime(self.return_datetime, DTF)
-            self.total_rental_period = (end - start).days
-            self.period_rent_price = self.total_rental_period * self.daily_rental_price
-
     @api.multi
-    @api.depends('vehicle_id', 'total_rental_period')
+    @api.depends('daily_rental_price', 'total_rental_period')
     def _compute_period_rent_price(self):
         for record in self:
             if record.total_rental_period:
