@@ -4,6 +4,7 @@ import openerp
 from openerp import models, fields, api
 from datetime import datetime, date, timedelta
 from openerp.tools import DEFAULT_SERVER_DATETIME_FORMAT as DTF
+from openerp.tools import DEFAULT_SERVER_DATE_FORMAT
 import openerp.addons.decimal_precision as dp
 import base64
 from lxml import etree
@@ -188,10 +189,8 @@ class FleetRentalDocument(models.Model):
     def _compute_total_rental_period(self):
         for record in self:
             if record.exit_datetime and record.return_datetime:
-                start = datetime.strptime(record.exit_datetime, DTF)
-                end = datetime.strptime(record.return_datetime, DTF)
-                delta = (end - start).days
-                record.total_rental_period = end.day - start.day if delta == 0 else delta
+                start = datetime.strptime(record.exit_datetime.split()[0], DEFAULT_SERVER_DATE_FORMAT)
+                end = datetime.strptime(record.return_datetime.split()[0], DEFAULT_SERVER_DATE_FORMAT)
                 record.total_rental_period = (end - start).days
 
     @api.onchange('exit_datetime', 'return_datetime')
