@@ -47,10 +47,10 @@ class FleetRentalDocument(models.Model):
     rent_return_datetime = fields.Datetime(string='Rent Return Date and Time')
 
     total_rental_period = fields.Integer(string='Total Rental Period', compute="_compute_total_rental_period", store=True, readonly=True)
-    total_rent_price = fields.Float(string='Total Rent Price', digits_compute=dp.get_precision('Product Price'))
+    total_rent_price = fields.Float(string='Total Rent Price', compute="_compute_total_rent_price", store=True, digits_compute=dp.get_precision('Product Price'), readonly=True)
 
     period_rent_price = fields.Float(string='Period Rent Price', compute="_compute_period_rent_price", store=True, digits_compute=dp.get_precision('Product Price'), readonly=True)
-    extra_driver_charge = fields.Float(string='Extra Driver Charge', digits_compute=dp.get_precision('Product Price'))
+    extra_driver_charge = fields.Float(string='Extra Driver Charge', compute="_compute_extra_driver_charge", store=True, digits_compute=dp.get_precision('Product Price'), readonly=True)
     advanced_deposit = fields.Float(string='Advanced Deposit', store=True, digits_compute=dp.get_precision('Product Price'), readonly=True)
     balance = fields.Float(string='Balance', compute="_compute_balance", store=True, digits_compute=dp.get_precision('Product Price'), readonly=True,
                            help='If balance is negative means we have to return amount to customer. If balance is positive means customer should to pay')

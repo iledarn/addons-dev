@@ -61,6 +61,17 @@ class FleetRentalDocumentRent(models.Model):
         for record in self:
             record.period_rent_price = record.total_rental_period * record.daily_rental_price
 
+    @api.onchange('total_rental_period', 'extra_driver_charge_per_day')
+    def _compute_extra_driver_charge(self):
+        for record in self:
+            if record.total_rental_period:
+                record.extra_driver_charge = record.total_rental_period * record.extra_driver_charge_per_day
+
+    @api.onchange('period_rent_price', 'extra_driver_charge', 'other_extra_charges')
+    def _compute_total_rent_price(self):
+        for record in self:
+            record.total_rent_price = record.period_rent_price + record.extra_driver_charge + record.other_extra_charges
+
     @api.multi
     def _compute_png(self):
         for rec in self:
@@ -183,12 +194,6 @@ class FleetRentalDocumentRent(models.Model):
         for record in self:
             record.odometer_before = record.vehicle_id.odometer
 
-    @api.onchange('daily_rental_price', 'vehicle_id', 'diff_datetime', 'return_datetime', 'return_datetime', 'extra_driver_charge_per_day', 'other_extra_charges')
-    def all_calculations(self):
-        for record in self:
-            record.extra_driver_charge = record.total_rental_period * record.extra_driver_charge_per_day
-            record.total_rent_price = record.period_rent_price + record.extra_driver_charge + record.other_extra_charges
-
     @api.depends('document_extend_ids')
     def _get_extends(self):
         for document in self:
@@ -203,10 +208,6 @@ class FleetRentalDocumentRent(models.Model):
         self.allowed_kilometer_per_day = self.vehicle_id.allowed_kilometer_per_day
         self.rate_per_extra_km = self.vehicle_id.rate_per_extra_km
         self.daily_rental_price = self.vehicle_id.daily_rental_price
-
-    @api.onchange('period_rent_price', 'extra_driver_charge', 'other_extra_charges')
-    def _onchange_charges(self):
-        self.total_rent_price = self.period_rent_price + self.extra_driver_charge + self.other_extra_charges
 
     @api.multi
     def action_view_invoice(self):
