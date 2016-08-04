@@ -35,7 +35,7 @@ class FleetRentalDocument(models.Model):
     account_move_lines_ids = fields.One2many('account.move.line', 'fleet_rental_document_id', string='Entrie lines', readonly=True)
     allowed_kilometer_per_day = fields.Integer(string='Allowed kilometer per day')
     rate_per_extra_km = fields.Float(string='Rate per extra km')
-    daily_rental_price = fields.Float(string='Daily Rental Price', compute="_compute_vehicle_rental", store=True, readonly=True)
+    daily_rental_price = fields.Float(string='Daily Rental Price')
     odometer_before = fields.Float(string='Odometer', readonly=True, store=True)
 
     extra_driver_charge_per_day = fields.Float(string='Extra Driver Charge per day', digits_compute=dp.get_precision('Product Price'), default=0)
@@ -49,7 +49,7 @@ class FleetRentalDocument(models.Model):
     total_rental_period = fields.Integer(string='Total Rental Period', compute="_compute_total_rental_period", store=True, readonly=True)
     total_rent_price = fields.Float(string='Total Rent Price', digits_compute=dp.get_precision('Product Price'))
 
-    period_rent_price = fields.Float(string='Period Rent Price', digits_compute=dp.get_precision('Product Price'))
+    period_rent_price = fields.Float(string='Period Rent Price', compute="_compute_period_rent_price", store=True, digits_compute=dp.get_precision('Product Price'), readonly=True)
     extra_driver_charge = fields.Float(string='Extra Driver Charge', digits_compute=dp.get_precision('Product Price'))
     advanced_deposit = fields.Float(string='Advanced Deposit', store=True, digits_compute=dp.get_precision('Product Price'), readonly=True)
     balance = fields.Float(string='Balance', compute="_compute_balance", store=True, digits_compute=dp.get_precision('Product Price'), readonly=True,
