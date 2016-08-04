@@ -39,22 +39,6 @@ class FleetRentalDocumentReturn(models.Model):
     price_after_discount = fields.Float(string='Price After Discount', compute="_compute_price_after_discount", store=True, digits_compute=dp.get_precision('Product Price'), readonly=True)
     document_rent_id = fields.Many2one('fleet_rental.document_rent')
     part_line_ids = fields.One2many('fleet_rental.svg_vehicle_part_line', 'document_id', string='Vehicle part')
-    png_file = fields.Text('PNG', compute='_compute_png', store=False)
-
-    @api.multi
-    def _compute_png(self):
-        for rec in self:
-            f = open('/'.join([os.path.dirname(os.path.realpath(__file__)),
-                               '../static/src/img/car-cutout.svg']), 'r')
-            svg_file = f.read()
-            dom = etree.fromstring(svg_file)
-            for line in rec.part_line_ids:
-                if line.state == 'broken':
-                    for el in dom.xpath('//*[@id="%s"]' % line.part_id.path_ID):
-                        el.attrib['fill'] = 'red'
-            f.close()
-            with Image(blob=etree.tostring(dom), format='svg') as img:
-                rec.png_file = base64.b64encode(img.make_blob('png'))
 
     @api.multi
     @api.depends('period_rent_price', 'extra_driver_charge', 'other_extra_charges')
