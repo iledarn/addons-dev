@@ -192,7 +192,7 @@
                        attrs="{'readonly': [('state', 'not in', ('draft'))]}"/>
               </group>
               <group>
-                <group col="2" string="Vehicle Information">
+                <group col="2" string="Rental Details">
                   <field name="user_branch_id" invisible="True"/>
                   <field name="daily_rental_price" attrs="{'readonly': [('state', 'not in', ('draft','booked'))]}"/>
                   <field name="rate_per_extra_km" attrs="{'readonly': [('state', 'not in', ('draft','booked'))]}"/>

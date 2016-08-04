@@ -103,7 +103,7 @@
                 <field name="partner_id" readonly="1"/>
               </group>
               <group>
-                <group col="2" string="Vehicle Information">
+                <group col="2" string="Rental Details">
                   <field name="vehicle_id" readonly="1"/>
                   <field name="rent_return_datetime" invisible="1"/>
                   <field name="allowed_kilometer_per_day" readonly="1"/>
