@@ -56,6 +56,11 @@ class FleetRentalDocumentRent(models.Model):
                 end = datetime.strptime(record.return_datetime.split()[0], DEFAULT_SERVER_DATE_FORMAT)
                 record.total_rental_period = (end - start).days
 
+    @api.onchange('daily_rental_price', 'total_rental_period')
+    def _compute_period_rent_price(self):
+        for record in self:
+            record.period_rent_price = record.total_rental_period * record.daily_rental_price
+
     @api.multi
     def _compute_png(self):
         for rec in self:
