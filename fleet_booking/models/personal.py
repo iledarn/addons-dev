@@ -48,7 +48,7 @@ class ResPartner(models.Model):
 
     @api.model
     def _get_default_reference(self):
-        return self.env['ir.sequence'].get('res.partner')
+        return self.env['ir.sequence'].next_by_code('res.partner')
 
     ref = fields.Char(default=_get_default_reference)
 
