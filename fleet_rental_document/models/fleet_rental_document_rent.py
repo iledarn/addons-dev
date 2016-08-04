@@ -185,14 +185,6 @@ class FleetRentalDocumentRent(models.Model):
                 'extends_count': len(document.document_extend_ids),
             })
 
-    @api.onchange('vehicle_id')
-    def on_change_vehicle_id(self):
-        self._compute_png()
-        self.mapped('document_id')._compute_png()
-        self.allowed_kilometer_per_day = self.vehicle_id.allowed_kilometer_per_day
-        self.rate_per_extra_km = self.vehicle_id.rate_per_extra_km
-        self.daily_rental_price = self.vehicle_id.daily_rental_price
-
     @api.multi
     def action_view_invoice(self):
         invoice_ids = self.mapped('invoice_ids')
