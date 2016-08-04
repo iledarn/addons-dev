@@ -55,8 +55,8 @@ class FleetRentalDocument(models.Model):
     balance = fields.Float(string='Balance', compute="_compute_balance", store=True, digits_compute=dp.get_precision('Product Price'), readonly=True,
                            help='If balance is negative means we have to return amount to customer. If balance is positive means customer should to pay')
 
-    check_line_ids = fields.One2many('fleet_rental.check_line', 'document_id', string='Vehicle rental check lines')
-    part_line_ids = fields.One2many('fleet_rental.svg_vehicle_part_line', 'document_id', string='Vehicle part')
+    check_line_ids = fields.Many2many('fleet_rental.check_line', string='Vehicle rental check lines')
+    part_line_ids = fields.Many2many('fleet_rental.svg_vehicle_part_line', string='Vehicle part')
 
     invoice_ids = fields.Many2many("account.invoice", string='Invoices', compute="_get_invoiced", readonly=True, copy=False)
     invoice_count = fields.Integer(string='# of Invoices', compute='_get_invoiced', readonly=True)
@@ -166,18 +166,6 @@ class FleetRentalDocument(models.Model):
                 'invoice_count': len(set(invoice_ids.ids + refund_ids.ids)),
                 'invoice_ids': invoice_ids.ids + refund_ids.ids,
             })
-
-    @api.model
-    def default_get(self, fields_list):
-        result = super(FleetRentalDocument, self).default_get(fields_list)
-        items = self.env['fleet_rental.item_to_check'].search([])
-        parts = self.env['fleet_rental.svg_vehicle_part'].search([])
-
-        result['check_line_ids'] = [(5, 0, 0)] + [(0, 0, {'item_id': item.id,'exit_check_yes': False, 'exit_check_no': False,'exit_check_yes': False, 'exit_check_no': False,}) for item in items]
-        result['part_line_ids'] = [(5, 0, 0)] + [(0, 0, {'part_id': part.id, 'path_ID': part.path_ID}) for part in parts]
-        result['exit_datetime'] = fields.Datetime.now()
-        result['return_datetime'] = fields.Datetime.to_string(datetime.utcnow() + timedelta(days=1))
-        return result
 
     @api.multi
     @api.depends('exit_datetime', 'return_datetime')

@@ -47,6 +47,18 @@ class FleetRentalDocumentRent(models.Model):
     invoice_line_ids = fields.One2many('account.invoice.line', 'fleet_rental_document_id', string='Invoice Lines', copy=False)
     odometer_before = fields.Float(string='Odometer', compute='_compute_odometer', store=True, readonly=True)
 
+    @api.model
+    def default_get(self, fields_list):
+        result = super(FleetRentalDocumentRent, self).default_get(fields_list)
+        items = self.env['fleet_rental.item_to_check'].search([])
+        parts = self.env['fleet_rental.svg_vehicle_part'].search([])
+
+        result['check_line_ids'] = [(5, 0, 0)] + [(0, 0, {'item_id': item.id,'exit_check_yes': False, 'exit_check_no': False,'exit_check_yes': False, 'exit_check_no': False,}) for item in items]
+        result['part_line_ids'] = [(5, 0, 0)] + [(0, 0, {'part_id': part.id, 'path_ID': part.path_ID}) for part in parts]
+        result['exit_datetime'] = fields.Datetime.now()
+        result['return_datetime'] = fields.Datetime.to_string(datetime.utcnow() + timedelta(days=1))
+        return result
+
     @api.onchange('exit_datetime', 'return_datetime')
     def _compute_total_rental_period(self):
         for record in self:
@@ -247,28 +259,25 @@ class FleetRentalDocumentRent(models.Model):
         document_return_obj = self.env['fleet_rental.document_return']
         for rent in self:
             document_return = document_return_obj.create({
-               'partner_id': rent.partner_id.id,
-               'vehicle_id': rent.vehicle_id.id,
-               'allowed_kilometer_per_day': rent.allowed_kilometer_per_day,
-               'rate_per_extra_km': rent.rate_per_extra_km,
-               'daily_rental_price': rent.daily_rental_price,
-               'origin': rent.name,
-               'exit_datetime': rent.exit_datetime,
-               'type': 'return',
-               'return_datetime': fields.Datetime.now(),
-               'odometer_before': rent.odometer_before,
-               'rent_return_datetime': rent.return_datetime,
-               'extra_driver_charge_per_day': rent.extra_driver_charge_per_day,
-               'extra_driver_charge': rent.extra_driver_charge,
-               'document_rent_id': rent.id,
+                'partner_id': rent.partner_id.id,
+                'vehicle_id': rent.vehicle_id.id,
+                'allowed_kilometer_per_day': rent.allowed_kilometer_per_day,
+                'rate_per_extra_km': rent.rate_per_extra_km,
+                'daily_rental_price': rent.daily_rental_price,
+                'origin': rent.name,
+                'exit_datetime': rent.exit_datetime,
+                'type': 'return',
+                'return_datetime': fields.Datetime.now(),
+                'odometer_before': rent.odometer_before,
+                'rent_return_datetime': rent.return_datetime,
+                'extra_driver_charge_per_day': rent.extra_driver_charge_per_day,
+                'extra_driver_charge': rent.extra_driver_charge,
+                'document_rent_id': rent.id,
+                'other_extra_charges': rent.other_extra_charges,
+                'check_line_ids': [(6, 0, rent.check_line_ids.ids)],
+                'part_line_ids': [(6, 0, rent.part_line_ids.ids)],
                })
-            rent.write({'document_return_id': document_return.id})
-            for r in rent.check_line_ids:
-                for w in document_return.check_line_ids:
-                    if r.item_id == w.item_id:
-                        w.exit_check_yes = r.exit_check_yes
-                        w.exit_check_no = r.exit_check_no
-                        break
+            rent.sudo().write({'document_return_id': document_return.id})
 
         return self.action_view_document_return(document_return.id)
 

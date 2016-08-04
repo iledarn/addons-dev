@@ -101,10 +101,10 @@
               </div>
               <group>
                 <field name="partner_id" readonly="1"/>
+                <field name="vehicle_id" readonly="1"/>
               </group>
               <group>
                 <group col="2" string="Rental Details">
-                  <field name="vehicle_id" readonly="1"/>
                   <field name="rent_return_datetime" invisible="1"/>
                   <field name="allowed_kilometer_per_day" readonly="1"/>
                   <field name="rate_per_extra_km" readonly="1"/>
@@ -144,7 +144,6 @@
                       <field name="return_check_no"/>
                     </tree>
                   </field>
-                  <field name="part_line_ids" widget="svg" svg_file="/fleet_rental_document/static/src/img/car-cutout.svg" svg_colors='red:broken;original:operative' svg_id_field="path_ID" svg_color_field="state" nolabel = '1'/>
                 </page>
               </notebook>
               <group>

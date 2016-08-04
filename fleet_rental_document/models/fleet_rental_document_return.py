@@ -40,7 +40,6 @@ class FleetRentalDocumentReturn(models.Model):
     extra_kilos_charge = fields.Float(string='Extra Kilos Charge', digits_compute=dp.get_precision('Product Price'), compute="_compute_extra_kilometers", store=True, readonly=True, default=0)
     price_after_discount = fields.Float(string='Price After Discount', compute="_compute_price_after_discount", store=True, digits_compute=dp.get_precision('Product Price'), readonly=True)
     document_rent_id = fields.Many2one('fleet_rental.document_rent')
-    part_line_ids = fields.One2many('fleet_rental.svg_vehicle_part_line', 'document_id', string='Vehicle part')
 
     @api.onchange('exit_datetime', 'return_datetime')
     def _compute_total_rental_period(self):
@@ -79,7 +78,7 @@ class FleetRentalDocumentReturn(models.Model):
     def action_return_car(self):
         for ret in self:
             ret.state = 'open'
-            ret.document_rent_id.state = 'returned'
+            ret.document_rent_id.sudo().state = 'returned'
             ret.vehicle_id.state_id= self.env.ref('fleet.vehicle_state_active')
 
     @api.multi
