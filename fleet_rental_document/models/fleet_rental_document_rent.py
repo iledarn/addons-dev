@@ -46,7 +46,6 @@ class FleetRentalDocumentRent(models.Model):
     invoice_count = fields.Integer(string='# of Invoices', compute='_get_invoiced', readonly=True)
     invoice_line_ids = fields.One2many('account.invoice.line', 'fleet_rental_document_id', string='Invoice Lines', copy=False)
     odometer_before = fields.Float(string='Odometer', compute='_compute_odometer', store=True, readonly=True)
-    png_file = fields.Text('PNG', compute='_compute_png', store=False)
 
     @api.onchange('exit_datetime', 'return_datetime')
     def _compute_total_rental_period(self):
@@ -71,21 +70,6 @@ class FleetRentalDocumentRent(models.Model):
     def _compute_total_rent_price(self):
         for record in self:
             record.total_rent_price = record.period_rent_price + record.extra_driver_charge + record.other_extra_charges
-
-    @api.multi
-    def _compute_png(self):
-        for rec in self:
-            f = open('/'.join([os.path.dirname(os.path.realpath(__file__)),
-                               '../static/src/img/car-cutout.svg']), 'r')
-            svg_file = f.read()
-            dom = etree.fromstring(svg_file)
-            for line in rec.part_line_ids:
-                if line.state == 'broken':
-                    for el in dom.xpath('//*[@id="%s"]' % line.part_id.path_ID):
-                        el.attrib['fill'] = 'red'
-            f.close()
-            with Image(blob=etree.tostring(dom), format='svg') as img:
-                rec.png_file = base64.b64encode(img.make_blob('png'))
 
     @api.depends('total_rent_price', 'account_move_lines_ids', 'document_extend_ids')
     def _compute_balance(self):
