@@ -124,12 +124,6 @@ class FleetRentalDocument(models.Model):
     @api.onchange('daily_rental_price', 'vehicle_id', 'exit_datetime', 'return_datetime', 'return_datetime', 'extra_driver_charge_per_day', 'other_extra_charges')
     def all_calculations(self):
         for record in self:
-            if record.exit_datetime and record.return_datetime:
-                start = datetime.strptime(record.exit_datetime, DTF)
-                end = datetime.strptime(record.return_datetime, DTF)
-                delta = (end - start).days
-                record.total_rental_period = end.day - start.day if delta == 0 else delta
-            record.period_rent_price = record.total_rental_period * record.daily_rental_price
             record.total_rent_price = record.period_rent_price + record.extra_driver_charge + record.other_extra_charges
             record.extra_driver_charge = record.total_rental_period * record.extra_driver_charge_per_day
 
@@ -198,8 +192,7 @@ class FleetRentalDocument(models.Model):
     @api.depends('daily_rental_price', 'total_rental_period')
     def _compute_period_rent_price(self):
         for record in self:
-            if record.total_rental_period:
-                record.period_rent_price = record.total_rental_period * record.daily_rental_price
+            record.period_rent_price = record.total_rental_period * record.daily_rental_price
 
     @api.depends('total_rental_period', 'extra_driver_charge_per_day')
     def _compute_extra_driver_charge(self):

@@ -3,6 +3,7 @@
 from openerp import models, fields, api
 from datetime import datetime, date, timedelta
 from openerp.tools import DEFAULT_SERVER_DATETIME_FORMAT as DTF
+from openerp.tools import DEFAULT_SERVER_DATE_FORMAT
 import openerp.addons.decimal_precision as dp
 import base64
 from lxml import etree
@@ -46,6 +47,14 @@ class FleetRentalDocumentRent(models.Model):
     invoice_line_ids = fields.One2many('account.invoice.line', 'fleet_rental_document_id', string='Invoice Lines', copy=False)
     odometer_before = fields.Float(string='Odometer', compute='_compute_odometer', store=True, readonly=True)
     png_file = fields.Text('PNG', compute='_compute_png', store=False)
+
+    @api.onchange('exit_datetime', 'return_datetime')
+    def _compute_total_rental_period(self):
+        for record in self:
+            if record.exit_datetime and record.return_datetime:
+                start = datetime.strptime(record.exit_datetime.split()[0], DEFAULT_SERVER_DATE_FORMAT)
+                end = datetime.strptime(record.return_datetime.split()[0], DEFAULT_SERVER_DATE_FORMAT)
+                record.total_rental_period = (end - start).days
 
     @api.multi
     def _compute_png(self):
@@ -172,10 +181,6 @@ class FleetRentalDocumentRent(models.Model):
     @api.onchange('daily_rental_price', 'vehicle_id', 'diff_datetime', 'return_datetime', 'return_datetime', 'extra_driver_charge_per_day', 'other_extra_charges')
     def all_calculations(self):
         for record in self:
-            if record.exit_datetime and record.return_datetime:
-                start = datetime.strptime(record.exit_datetime, DTF)
-                end = datetime.strptime(record.diff_datetime or record.return_datetime, DTF)
-            record.period_rent_price = record.total_rental_period * record.daily_rental_price
             record.extra_driver_charge = record.total_rental_period * record.extra_driver_charge_per_day
             record.total_rent_price = record.period_rent_price + record.extra_driver_charge + record.other_extra_charges
 
@@ -193,16 +198,6 @@ class FleetRentalDocumentRent(models.Model):
         self.allowed_kilometer_per_day = self.vehicle_id.allowed_kilometer_per_day
         self.rate_per_extra_km = self.vehicle_id.rate_per_extra_km
         self.daily_rental_price = self.vehicle_id.daily_rental_price
-        self.period_rent_price = self.total_rental_period * self.daily_rental_price
-
-    @api.onchange('exit_datetime', 'return_datetime')
-    def _onchange_dates(self):
-        if self.exit_datetime and self.return_datetime:
-            start = datetime.strptime(self.exit_datetime, DTF)
-            end = datetime.strptime(self.return_datetime, DTF)
-            delta = (end - start).days
-            self.total_rental_period = end.day - start.day if delta == 0 else delta
-            self.period_rent_price = self.total_rental_period * self.daily_rental_price
 
     @api.onchange('period_rent_price', 'extra_driver_charge', 'other_extra_charges')
     def _onchange_charges(self):
