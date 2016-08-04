@@ -41,10 +41,12 @@ class FleetRentalDocumentReturn(models.Model):
     part_line_ids = fields.One2many('fleet_rental.svg_vehicle_part_line', 'document_id', string='Vehicle part')
 
     @api.multi
-    @api.depends('period_rent_price', 'extra_driver_charge', 'other_extra_charges')
+    @api.depends('period_rent_price', 'extra_driver_charge', 'other_extra_charges', 'extra_hours_charge', 'extra_kilos_charge', 'penalties')
     def _compute_total_rent_price(self):
         for record in self:
-            record.total_rent_price = record.period_rent_price + record.extra_driver_charge + record.other_extra_charges
+            record.total_rent_price = record.period_rent_price + record.extra_driver_charge + \
+                                      record.other_extra_charges + record.extra_hours_charge + \
+                                      record.extra_kilos_charge + record.penalties
 
     @api.onchange('period_rent_price', 'extra_driver_charge', 'other_extra_charges', 'extra_hours_charge', 'extra_kilos_charge', 'penalties')
     def _onchange_total_price_fields(self):
