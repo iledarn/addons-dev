@@ -23,6 +23,7 @@
         "report",
         "sale_membership",
         "fleet_vehicle_color",
+        "fleet_branch",
     ],
     "external_dependencies": {"python": ['wand'], "bin": []},
     "data": [
