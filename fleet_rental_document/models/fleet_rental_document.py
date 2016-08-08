@@ -53,7 +53,7 @@ class FleetRentalDocument(models.Model):
 
     period_rent_price = fields.Float(string='Period Rent Price', compute="_compute_period_rent_price", store=True, digits_compute=dp.get_precision('Product Price'), readonly=True)
     extra_driver_charge = fields.Float(string='Extra Driver Charge', compute="_compute_extra_driver_charge", store=True, digits_compute=dp.get_precision('Product Price'), readonly=True)
-    advanced_deposit = fields.Float(string='Advanced Deposit', store=True, digits_compute=dp.get_precision('Product Price'), readonly=True)
+    advanced_deposit = fields.Float(string='Advanced Deposit', digits_compute=dp.get_precision('Product Price'))
     balance = fields.Float(string='Balance', compute="_compute_balance", store=True, digits_compute=dp.get_precision('Product Price'), readonly=True,
                            help='If balance is negative means we have to return amount to customer. If balance is positive means customer should to pay')
 
@@ -164,15 +164,6 @@ class FleetRentalDocument(models.Model):
     def _compute_total_rent_price(self):
         for record in self:
             record.total_rent_price = record.period_rent_price + record.extra_driver_charge + record.other_extra_charges
-
-    @api.multi
-    @api.depends('partner_id.rental_deposit_analytic_account_id.line_ids.amount')
-    def _compute_advanced_deposit(self):
-        for record in self:
-            account_analytic = record.partner_id.rental_deposit_analytic_account_id
-            if account_analytic:
-                account_analytic._compute_debit_credit_balance()
-            record.advanced_deposit = account_analytic and account_analytic.balance or 0.0
 
     @api.depends('total_rent_price', 'advanced_deposit')
     def _compute_balance(self):
