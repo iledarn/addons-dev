@@ -21,6 +21,8 @@
         "web_form_svg",
         "fleet_vehicle_color",
         "report",
+        "sale_membership",
+        "fleet_vehicle_color",
     ],
     "external_dependencies": {"python": ['wand'], "bin": []},
     "data": [

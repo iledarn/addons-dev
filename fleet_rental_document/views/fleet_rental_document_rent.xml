@@ -186,10 +186,14 @@
                 </h1>
               </div>
 
-              <group>
-                <field name="partner_id" attrs="{'readonly': [('state', 'not in', ('draft'))]}"/>
+              <group string="Customer">
+                <field name="partner_id" attrs="{'readonly': [('state', 'not in', ('draft'))]}" string="Name / Membership ID / ID Number"/>
+                <field name="membership_type_id" options='{"no_open": True}'/>
+              </group>
+              <group string="Vehicle">
                 <field name="vehicle_id" domain="[('state_id.name','=','Active'),('branch_id','=', user_branch_id)]"
-                       attrs="{'readonly': [('state', 'not in', ('draft'))]}"/>
+                       attrs="{'readonly': [('state', 'not in', ('draft'))]}" string="Brend / Model / Plate Number"/>
+                <field name="vehicle_color_id" options='{"no_open": True}'/>
               </group>
               <group>
                 <group col="2" string="Rental Details">
