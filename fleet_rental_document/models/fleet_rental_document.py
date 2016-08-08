@@ -33,8 +33,6 @@ class FleetRentalDocument(models.Model):
     vehicle_id = fields.Many2one('fleet.vehicle', string="Vehicle", required=True)
     vehicle_color_id = fields.Many2one('fleet.vehicle_color', related='vehicle_id.color_id', readonly=True)
     license_plate = fields.Char('License Plate', related='vehicle_id.license_plate')
-    account_move_ids = fields.One2many('account.move', 'fleet_rental_document_id', string='Entries', readonly=True)
-    account_move_lines_ids = fields.One2many('account.move.line', 'fleet_rental_document_id', string='Entrie lines', readonly=True)
     allowed_kilometer_per_day = fields.Integer(string='Allowed kilometer per day')
     rate_per_extra_km = fields.Float(string='Rate per extra km')
     daily_rental_price = fields.Float(string='Daily Rental Price')
@@ -53,9 +51,8 @@ class FleetRentalDocument(models.Model):
 
     period_rent_price = fields.Float(string='Period Rent Price', compute="_compute_period_rent_price", store=True, digits_compute=dp.get_precision('Product Price'), readonly=True)
     extra_driver_charge = fields.Float(string='Extra Driver Charge', compute="_compute_extra_driver_charge", store=True, digits_compute=dp.get_precision('Product Price'), readonly=True)
-    advanced_deposit = fields.Float(string='Advanced Deposit', store=True, digits_compute=dp.get_precision('Product Price'), readonly=True)
-    balance = fields.Float(string='Balance', compute="_compute_balance", store=True, digits_compute=dp.get_precision('Product Price'), readonly=True,
-                           help='If balance is negative means we have to return amount to customer. If balance is positive means customer should to pay')
+    advanced_deposit = fields.Float(string='Advanced Deposit', compute="_compute_advanced_deposit", store=True, digits_compute=dp.get_precision('Product Price'), readonly=True)
+    balance = fields.Float(string='Balance', compute="_compute_balance", store=True, digits_compute=dp.get_precision('Product Price'), readonly=True)
 
     check_line_ids = fields.Many2many('fleet_rental.check_line', string='Vehicle rental check lines')
     part_line_ids = fields.Many2many('fleet_rental.svg_vehicle_part_line', string='Vehicle part')
@@ -166,13 +163,12 @@ class FleetRentalDocument(models.Model):
             record.total_rent_price = record.period_rent_price + record.extra_driver_charge + record.other_extra_charges
 
     @api.multi
-    @api.depends('partner_id.rental_deposit_analytic_account_id.line_ids.amount')
+    @api.depends('partner_id.rental_account_id.line_ids.move_id.balance_cash_basis')
     def _compute_advanced_deposit(self):
         for record in self:
-            account_analytic = record.partner_id.rental_deposit_analytic_account_id
-            if account_analytic:
-                account_analytic._compute_debit_credit_balance()
-            record.advanced_deposit = account_analytic and account_analytic.balance or 0.0
+            record.advanced_deposit = 0
+            for line in record.partner_id.rental_account_id.mapped('line_ids').mapped('move_id'):
+                record.advanced_deposit+= abs(line.balance_cash_basis)
 
     @api.depends('total_rent_price', 'advanced_deposit')
     def _compute_balance(self):
