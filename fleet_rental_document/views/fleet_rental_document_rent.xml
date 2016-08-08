@@ -186,13 +186,13 @@
                 </h1>
               </div>
 
-              <group string="Customer">
+              <group string="Customer Information">
                 <field name="partner_id" attrs="{'readonly': [('state', 'not in', ('draft'))]}" string="Name / Membership ID / ID Number"/>
                 <field name="membership_type_id" options='{"no_open": True}'/>
               </group>
-              <group string="Vehicle">
+              <group string="Vehicle Information">
                 <field name="vehicle_id" domain="[('state_id.name','=','Active'),('branch_id','=', user_branch_id)]"
-                       attrs="{'readonly': [('state', 'not in', ('draft'))]}" string="Brend / Model / Plate Number"/>
+                       attrs="{'readonly': [('state', 'not in', ('draft'))]}" string="Brand / Model / Plate Number"/>
                 <field name="vehicle_color_id" options='{"no_open": True}'/>
               </group>
               <group>
@@ -244,6 +244,17 @@
               </group>
             </sheet>
           </form>
+        </field>
+      </record>
+
+      <record id="view_document_rent_filter" model="ir.ui.view">
+        <field name="name">fleet_rental.document_rent.select</field>
+        <field name="model">fleet_rental.document_rent</field>
+        <field name="arch" type="xml">
+          <search string="Search Document">
+            <field name="name"/>
+            <field name="license_plate"/>
+          </search>
         </field>
       </record>
 

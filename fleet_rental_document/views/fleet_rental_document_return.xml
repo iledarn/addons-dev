@@ -99,12 +99,12 @@
                   <field name="name" readonly="1"/>
                 </h1>
               </div>
-              <group string="Customer">
+              <group string="Customer Information">
                 <field name="partner_id" readonly="1" string="Name / Membership ID / ID Number"/>
                 <field name="membership_type_id" options='{"no_open": True}'/>
               </group>
-              <group string="Vehicle">
-                <field name="vehicle_id" readonly="1" string="Brend / Model / Plate Number"/>
+              <group string="Vehicle Information">
+                <field name="vehicle_id" readonly="1" string="Brand / Model / Plate Number"/>
                 <field name="vehicle_color_id" options='{"no_open": True}'/>
               </group>
               <group>

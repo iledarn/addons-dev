@@ -32,6 +32,7 @@ class FleetRentalDocument(models.Model):
     membership_type_id = fields.Many2one('sale_membership.type', related='partner_id.type_id', string='Membership')
     vehicle_id = fields.Many2one('fleet.vehicle', string="Vehicle", required=True)
     vehicle_color_id = fields.Many2one('fleet.vehicle_color', related='vehicle_id.color_id', readonly=True)
+    license_plate = fields.Char('License Plate', related='vehicle_id.license_plate')
     account_move_ids = fields.One2many('account.move', 'fleet_rental_document_id', string='Entries', readonly=True)
     account_move_lines_ids = fields.One2many('account.move.line', 'fleet_rental_document_id', string='Entrie lines', readonly=True)
     allowed_kilometer_per_day = fields.Integer(string='Allowed kilometer per day')
