@@ -74,7 +74,8 @@
       <field name="inherit_id" ref="base.view_res_partner_filter"/>
       <field name="arch" type="xml">
         <xpath expr="//field[@name='name']" position="before">
-          <field name="ref" string="Customer ID"/>
+          <field name="identification_number" string="ID Number"/>
+          <field name="ref" string="Membership ID"/>
         </xpath>
       </field>
     </record>
