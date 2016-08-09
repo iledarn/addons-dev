@@ -27,6 +27,7 @@ class FleetRentalCreateInvoiceWizard(models.TransientModel):
 
     @api.multi
     def _create_invoice(self, document, amount):
+        self.ensure_one()
         inv_obj = self.env['account.invoice']
 
         account_id = False
@@ -73,16 +74,7 @@ class FleetRentalCreateInvoiceWizard(models.TransientModel):
 
     @api.multi
     def create_invoices(self):
-        if self._context.get('active_model') == 'fleet_rental.document_extend':
-            documents_extend = self.env['fleet_rental.document_extend'].browse(self._context.get('active_ids', []))
-            documents = documents_extend.mapped('document_rent_id')
-        elif self._context.get('active_model') == 'fleet_rental.document_rent':
-            documents = self.env['fleet_rental.document_rent'].browse(self._context.get('active_ids', []))
-        elif self._context.get('active_model') == 'fleet_rental.document_return':
-            documents_return = self.env['fleet_rental.document_return'].browse(self._context.get('active_ids', []))
-            documents = documents_return.mapped('document_rent_id')
-        else:
-            return
+        documents = self.env[self._context.get('active_model')].browse(self._context.get('active_ids', []))
 
         # Create deposit product if necessary
         if not self.product_id:

@@ -41,6 +41,10 @@ class FleetRentalDocumentReturn(models.Model):
     price_after_discount = fields.Float(string='Price After Discount', compute="_compute_price_after_discount", store=True, digits_compute=dp.get_precision('Product Price'), readonly=True)
     document_rent_id = fields.Many2one('fleet_rental.document_rent')
 
+    @api.multi
+    def action_view_invoice(self):
+        return self.mapped('document_id').action_view_invoice()
+
     @api.onchange('exit_datetime', 'return_datetime')
     def _compute_total_rental_period(self):
         for record in self:
