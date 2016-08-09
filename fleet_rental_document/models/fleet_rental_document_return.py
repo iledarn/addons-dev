@@ -46,6 +46,11 @@ class FleetRentalDocumentReturn(models.Model):
     price_after_discount = fields.Float(string='Price After Discount', compute="_compute_price_after_discount", store=True, digits_compute=dp.get_precision('Product Price'), readonly=True)
     document_rent_id = fields.Many2one('fleet_rental.document_rent')
 
+    @api.multi
+    def action_confirm(self):
+        for rent in self:
+            rent.state = 'closed'
+
     @api.depends('price_after_discount', 'advanced_deposit')
     def _compute_balance(self):
         for record in self:
@@ -162,3 +167,7 @@ class FleetRentalDocumentReturn(models.Model):
     def _compute_price_after_discount(self):
         for record in self:
             record.price_after_discount = record.total_rent_price - record.discount
+
+    @api.multi
+    def print_return(self):
+        return self.env['report'].get_action(self, 'fleet_rental_document.report_return')
