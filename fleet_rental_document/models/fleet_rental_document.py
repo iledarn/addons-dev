@@ -28,6 +28,7 @@ class FleetRentalDocument(models.Model):
         help="Reference of the document that produced this document.",
         readonly=True, states={'draft': [('readonly', False)]})
 
+    rental_account_id = fields.Many2one('account.analytic.account', string='analytic account for rental', readonly=True)
     partner_id = fields.Many2one('res.partner', string="Customer", domain=[('customer', '=', True)], required=True)
     membership_type_id = fields.Many2one('sale_membership.type', related='partner_id.type_id', string='Membership')
     vehicle_id = fields.Many2one('fleet.vehicle', string="Vehicle", required=True)
@@ -163,11 +164,11 @@ class FleetRentalDocument(models.Model):
             record.total_rent_price = record.period_rent_price + record.extra_driver_charge + record.other_extra_charges
 
     @api.multi
-    @api.depends('partner_id.rental_account_id.line_ids.move_id.balance_cash_basis')
+    @api.depends('rental_account_id.line_ids.move_id.balance_cash_basis')
     def _compute_advanced_deposit(self):
         for record in self:
             record.advanced_deposit = 0
-            for line in record.partner_id.rental_account_id.mapped('line_ids').mapped('move_id'):
+            for line in record.rental_account_id.mapped('line_ids').mapped('move_id'):
                 record.advanced_deposit+= abs(line.balance_cash_basis)
 
     @api.depends('total_rent_price', 'advanced_deposit')
