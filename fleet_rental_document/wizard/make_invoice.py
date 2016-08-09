@@ -52,7 +52,6 @@ class FleetRentalCreateInvoiceWizard(models.TransientModel):
         invoice = inv_obj.create({
             'name': document.name,
             'origin': document.name,
-            'fleet_rental_document_id': document.id,
             'type': 'out_invoice',
             'reference': False,
             'account_id': document.partner_id.property_account_receivable_id.id,
@@ -66,7 +65,7 @@ class FleetRentalCreateInvoiceWizard(models.TransientModel):
                 'discount': 0.0,
                 'uom_id': self.product_id.uom_id.id,
                 'product_id': self.product_id.id,
-                'fleet_rental_document_id': document.id,
+                'fleet_rental_document_id': document.document_id.id,
                 'account_analytic_id': document.rental_account_id.id,
             })],
         })
