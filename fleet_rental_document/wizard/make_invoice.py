@@ -10,8 +10,9 @@ class FleetRentalCreateInvoiceWizard(models.TransientModel):
 
     @api.model
     def _default_amount(self):
-        document = self.env[self._context.get('active_model')].browse(self._context.get('active_id'))
-        return document.document_id.total_rent_price
+        model = self._context.get('active_model')
+        document = self.env[model].browse(self._context.get('active_id'))
+        return document.total_rent_price if model == 'fleet_rental.document_rent' else document.customer_shall_pay
 
     amount = fields.Float('Down Payment Amount', digits=dp.get_precision('Account'),
                           help="The amount to be invoiced in advance.",

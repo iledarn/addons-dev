@@ -158,6 +158,7 @@ class FleetRentalDocumentRent(models.Model):
                 'other_extra_charges': rent.other_extra_charges,
                 'check_line_ids': [(6, 0, rent.check_line_ids.ids)],
                 'part_line_ids': [(6, 0, rent.part_line_ids.ids)],
+                'advanced_deposit': rent.advanced_deposit,
                })
             rent.sudo().write({'document_return_id': document_return.id})
 

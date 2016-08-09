@@ -28,7 +28,12 @@ class FleetRentalDocumentReturn(models.Model):
                                   string='Related Document', ondelete='restrict',
                                   help='common part of all three types of the documents', auto_join=True)
 
+    advanced_deposit = fields.Float(string='Advanced Deposit', readonly=True)
+    balance = fields.Float(string='Balance', compute="_compute_balance", store=True, digits_compute=dp.get_precision('Product Price'), readonly=True)
     total_rent_price = fields.Float(string='Total Rent Price', compute="_compute_total_rent_price", store=True, digits_compute=dp.get_precision('Product Price'), readonly=True)
+    customer_shall_pay = fields.Float(string='Customer Shall Pay', compute="_compute_customer_shall_pay", store=True, digits_compute=dp.get_precision('Product Price'), readonly=True)
+    returned_amount = fields.Float(string='Returned Amount', compute="_compute_returned_amount", store=True, digits_compute=dp.get_precision('Product Price'), readonly=True)
+    paid_amount = fields.Float(string='Paid Amount', compute="_compute_paid_amount", store=True, digits_compute=dp.get_precision('Product Price'), readonly=True)
     odometer_after = fields.Float(string='Odometer after Rent', related='vehicle_id.odometer')
     rent_return_datetime = fields.Datetime(string='Rent Return Date and Time')
     extra_hours = fields.Integer(string='Extra Hours', compute="_compute_extra_hours", store=True, readonly=True, default=0)
@@ -40,6 +45,29 @@ class FleetRentalDocumentReturn(models.Model):
     extra_kilos_charge = fields.Float(string='Extra Kilos Charge', digits_compute=dp.get_precision('Product Price'), compute="_compute_extra_kilometers", store=True, readonly=True, default=0)
     price_after_discount = fields.Float(string='Price After Discount', compute="_compute_price_after_discount", store=True, digits_compute=dp.get_precision('Product Price'), readonly=True)
     document_rent_id = fields.Many2one('fleet_rental.document_rent')
+
+    @api.depends('price_after_discount', 'advanced_deposit')
+    def _compute_balance(self):
+        for record in self:
+            record.balance = record.price_after_discount - record.advanced_deposit
+
+    @api.multi
+    @api.depends('rental_account_id.line_ids.move_id.balance_cash_basis')
+    def _compute_paid_amount(self):
+        for record in self:
+            record.advanced_deposit = 0
+            for line in record.rental_account_id.mapped('line_ids').mapped('move_id'):
+                record.paid_amount+= abs(line.balance_cash_basis)
+
+    @api.depends('balance')
+    def _compute_returned_amount(self):
+        for record in self:
+            record.returned_amount = abs(record.balance) if record.balance < 0 else 0
+
+    @api.depends('balance')
+    def _compute_customer_shall_pay(self):
+        for record in self:
+            record.customer_shall_pay = record.balance if record.balance > 0 else 0
 
     @api.multi
     def action_view_invoice(self):

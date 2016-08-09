@@ -134,6 +134,9 @@
                   <field name="price_after_discount" class="oe_inline"/>
                   <field name="advanced_deposit" class="oe_inline"/>
                   <field name="balance" class="oe_inline"/>
+                  <field name="customer_shall_pay" class="oe_inline"/>
+                  <field name="returned_amount" class="oe_inline"/>
+                  <field name="paid_amount" class="oe_inline"/>
                 </group>
               </group>
               <notebook>
