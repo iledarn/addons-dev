@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+  <data>
+
+    <record id="received_vehicle_wizard_view_form" model="ir.ui.view">
+      <field name="name">Received Vehicle</field>
+      <field name="model">fleet_rental.received_vehicle_wizard</field>
+      <field name="arch" type="xml">
+        <form string="Received Vehicle">
+          <sheet>
+            <group>
+              <field name="document_rent" options="{'no_create' : True, 'no_open': True}"/>
+              <field name="vehicle" options="{'no_create': True, 'no_open': True}"/>
+            </group>
+          </sheet>
+          <footer>
+            <button name="action_receive" string="Receive" type="object"
+                    attrs="{'invisible': ['|',('document_rent', '=', False),('vehicle', '=', False)]}"/>
+          </footer>
+        </form>
+      </field>
+    </record>
+
+    <record id="action_view_received_vehicle_wizard" model="ir.actions.act_window">
+      <field name="name">Received Vehicle</field>
+      <field name="type">ir.actions.act_window</field>
+      <field name="res_model">fleet_rental.received_vehicle_wizard</field>
+      <field name="view_type">form</field>
+      <field name="view_mode">form</field>
+      <field name="target">new</field>
+    </record>
+
+  </data>
+</openerp>

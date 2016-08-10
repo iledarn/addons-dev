@@ -6,6 +6,7 @@
       <menuitem name="Rents" parent="fleet_sale" id="fleet_rental_sale" sequence="1"/>
       <menuitem name="Extends" parent="fleet_sale" id="fleet_rental_sale_extends" sequence="2"/>
       <menuitem name="Returns" parent="fleet_sale" id="fleet_rental_sale_returns" sequence="3"/>
+      <menuitem action="action_view_received_vehicle_wizard" parent="fleet_sale" id="fleet_rental_received_vehicle" sequence="4"/>
 
       <record id='fleet_rental_document_form' model='ir.ui.view'>
         <field name="name">fleet.rental.document.form</field>
