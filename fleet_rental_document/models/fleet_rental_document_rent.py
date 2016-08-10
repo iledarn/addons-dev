@@ -123,13 +123,13 @@ class FleetRentalDocumentRent(models.Model):
     def action_book(self):
         for rent in self:
             rent.state = 'booked'
-            self.vehicle_id.state_id = self.env.ref('fleet.vehicle_state_booked')
+            self.vehicle_id.state_id = self.env.ref('fleet_rental_document.vehicle_state_booked')
 
     @api.multi
     def action_cancel_booking(self):
         for rent in self:
             rent.state = 'cancel'
-            self.vehicle_id.state_id = self.env.ref('fleet.vehicle_state_active')
+            self.vehicle_id.state_id = self.env.ref('fleet_rental_document.vehicle_state_active')
 
     @api.multi
     def action_confirm(self):

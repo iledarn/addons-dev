@@ -46,7 +46,7 @@ class FleetRentalDocumentExtend(models.Model):
     def action_submit(self):
         for rent in self:
             rent.state = 'booked'
-            self.vehicle_id.state_id = self.env.ref('fleet.vehicle_state_booked')
+            self.vehicle_id.state_id = self.env.ref('fleet_rental_document.vehicle_state_booked')
             self.document_rent_id.state = 'extended'
             self.document_rent_id.extend_return_datetime = self.return_datetime
 

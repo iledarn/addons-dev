@@ -8,7 +8,7 @@ class FleetRentalReceivedVehicleWizard(models.TransientModel):
     document_rent = fields.Many2one('fleet_rental.document_rent', string='Agreement Number',
                                        domain = lambda self: [('vehicle_id.branch_id', '=', self.env.user.branch_id.id), ('state', 'in', ['confirmed', 'extended'])])
     vehicle = fields.Many2one('fleet.vehicle', string='Car Plate',
-                                domain = lambda self: [('branch_id', '=', self.env.user.branch_id.id), ('state_id', '=', self.env.ref('fleet.vehicle_state_booked').id)])
+                                domain = lambda self: [('branch_id', '=', self.env.user.branch_id.id), ('state_id', '=', self.env.ref('fleet_rental_document.vehicle_state_booked').id)])
 
     @api.onchange('document_rent')
     def _onchange_document_rent(self):

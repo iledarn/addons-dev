@@ -122,7 +122,7 @@ class FleetRentalDocumentReturn(models.Model):
         for ret in self:
             ret.state = 'open'
             ret.document_rent_id.sudo().state = 'returned'
-            ret.vehicle_id.state_id= self.env.ref('fleet.vehicle_state_active')
+            ret.vehicle_id.state_id= self.env.ref('fleet_rental_document.vehicle_state_active')
 
     @api.multi
     def action_create_refund(self):

@@ -41,6 +41,7 @@
         "data/svg_vehicle_part.xml",
         "data/items_to_check.xml",
         "data/personal.xml",
+        "data/fleet.xml",
         'rent_report.xml',
         'views/report_rent.xml',
         'views/report_return.xml',
