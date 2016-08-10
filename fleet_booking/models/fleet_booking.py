@@ -22,7 +22,8 @@ class Vehicle(models.Model):
     asset_id = fields.Many2one('account.asset.asset', compute='compute_asset', inverse='asset_inverse', string='Asset')
     asset_ids = fields.One2many('account.asset.asset', 'vehicle_id')
     # TODO Rename deprecation to depreciation
-    state_id = fields.Many2one('fleet.vehicle.state', readonly=True, ondelete="restrict")
+    state_id = fields.Many2one('fleet.vehicle.state', readonly=True, ondelete="restrict",
+                               default = lambda self: self.env.ref('fleet_rental_document.vehicle_state_active').id)
 
     @api.one
     @api.depends('asset_ids')
