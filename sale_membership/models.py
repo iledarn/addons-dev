@@ -25,7 +25,7 @@ class Person(models.Model):
 
     _inherit = 'res.partner'
 
-    points = fields.Float(string='Current membership Points', default=0)
+    points = fields.Float(string='Current membership Points', default=0, readonly=True)
     type_id = fields.Many2one('sale_membership.type', compute='set_membership', string='Current Membership type', store=True, readonly=True)
     blocked = fields.Boolean(default=False, string='Blocked', readonly=True)
 
@@ -34,15 +34,6 @@ class Person(models.Model):
     def set_membership(self):
         if not self.customer:
             return
-        smt = self.env['sale_membership.type'].search([])
-        smt_last_index = len(smt) - 1
-        if not len(smt):
-            return
-        if self.points >= smt[smt_last_index].points:
-            self.type_id = smt[smt_last_index].id
-        else:
-            for r in range(smt_last_index):
-                if self.points >= smt[r].points and self.points < smt[r+1].points:
-                    self.type_id = smt[r].id
-                    break
-
+        l = self.env['sale_membership.type'].search([]).mapped('points')
+        m = max([x for x in l if self.points >= x])
+        self.type_id = self.env['sale_membership.type'].search([('points', '=', m)]).id
