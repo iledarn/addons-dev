@@ -56,6 +56,8 @@ class FleetRentalDocumentReturn(models.Model):
     def action_confirm(self):
         for ret in self:
             ret.state = 'closed'
+            ret.document_rent_id.sudo().state = 'returned'
+            ret.vehicle_id.state_id= self.env.ref('fleet_rental_document.vehicle_state_active')
             ret.partner_id.points+= ret.price_after_discount
 
     @api.depends('price_after_discount', 'advanced_deposit')
