@@ -33,7 +33,7 @@ class MembershipWizard(models.TransientModel):
     @api.multi
     def apply_membership(self):
         if self.new_membership_type_id:
-            self.partner_id.write({'points': self.new_membership_type_id.points})
+            self.partner_id.write({'demoting_offset': self.partner_id.points - self.new_membership_type_id.points})
             self.env['sale_membership.log'].create({'partner_id': self.partner_id.id,
                                                     'member_type_id': self.new_membership_type_id.id,
                                                     'reason': self.demoting_reason,

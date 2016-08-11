@@ -54,8 +54,9 @@ class FleetRentalDocumentReturn(models.Model):
 
     @api.multi
     def action_confirm(self):
-        for rent in self:
-            rent.state = 'closed'
+        for ret in self:
+            ret.state = 'closed'
+            ret.partner_id.points+= ret.price_after_discount
 
     @api.depends('price_after_discount', 'advanced_deposit')
     def _compute_balance(self):

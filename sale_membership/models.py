@@ -26,16 +26,17 @@ class Person(models.Model):
     _inherit = 'res.partner'
 
     points = fields.Float(string='Current membership Points', default=0, readonly=True)
+    demoting_offset = fields.Integer(help='this value will be raised each time on demotion by number of demoting type points', default=0, readonly=True)
     type_id = fields.Many2one('sale_membership.type', compute='set_membership', string='Current Membership type', store=True, readonly=True)
     blocked = fields.Boolean(default=False, string='Blocked', readonly=True)
 
     @api.one
-    @api.depends('points', 'customer')
+    @api.depends('points', 'demoting_offset', 'customer')
     def set_membership(self):
         if not self.customer:
             return
         l1 = self.env['sale_membership.type'].search([]).mapped('points')
-        l2 = [x for x in l1 if self.points >= x]
+        real_points = self.points - self.demoting_offset
+        l2 = [x for x in l1 if real_points >= x]
         if l2:
-            m = max(l2)
-            self.type_id = self.env['sale_membership.type'].search([('points', '=', m)]).id
+            self.type_id = self.env['sale_membership.type'].search([('points', '=', max(l2))]).id

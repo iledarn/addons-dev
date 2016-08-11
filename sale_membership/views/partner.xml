@@ -10,7 +10,6 @@
             <xpath expr="//page[@name='sales_purchases']/group/group[@name='sale']" position="inside">
                 <field name='type_id' string="Membership"/>
                 <field name='blocked' string="Blocked"/>
-                <field name='points' string="Points"/>
             </xpath>
         </data>
     </field>
