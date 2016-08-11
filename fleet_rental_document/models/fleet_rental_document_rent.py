@@ -175,7 +175,7 @@ class FleetRentalDocumentRent(models.Model):
             'type': action.type,
             'views': [(form_view_id, 'form')],
             'target': action.target,
-            'flags': {'form': {'action_buttons': True, 'options': {'mode': 'edit'}}},
+            # 'flags': {'form': {'action_buttons': True, 'options': {'mode': 'edit'}}},
             'context': action.context,
             'res_model': action.res_model,
         }
