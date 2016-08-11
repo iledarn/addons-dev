@@ -1,14 +1,9 @@
 # -*- coding: utf-8 -*-
 
 from openerp import models, fields, api
-from datetime import datetime, date, timedelta
-from openerp.tools import DEFAULT_SERVER_DATETIME_FORMAT as DTF
+from datetime import datetime, timedelta
 from openerp.tools import DEFAULT_SERVER_DATE_FORMAT
 import openerp.addons.decimal_precision as dp
-import base64
-from lxml import etree
-import os
-from wand.image import Image
 
 
 class FleetRentalDocumentRent(models.Model):
@@ -135,6 +130,10 @@ class FleetRentalDocumentRent(models.Model):
     def action_confirm(self):
         for rent in self:
             rent.state = 'confirmed'
+
+    @api.multi
+    def action_extend(self):
+        pass
 
     @api.multi
     def action_create_return(self):
