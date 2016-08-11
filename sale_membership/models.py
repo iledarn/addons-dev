@@ -34,6 +34,8 @@ class Person(models.Model):
     def set_membership(self):
         if not self.customer:
             return
-        l = self.env['sale_membership.type'].search([]).mapped('points')
-        m = max([x for x in l if self.points >= x])
-        self.type_id = self.env['sale_membership.type'].search([('points', '=', m)]).id
+        l1 = self.env['sale_membership.type'].search([]).mapped('points')
+        l2 = [x for x in l1 if self.points >= x]
+        if l2:
+            m = max(l2)
+            self.type_id = self.env['sale_membership.type'].search([('points', '=', m)]).id
