@@ -83,7 +83,7 @@
                         groups="base.group_user"
                         states="open"/>
                 <button name="action_confirm" string="Confirm Return" type="object"
-                      attrs="{'invisible': [('balance', '&gt;', 0), ('diff_pa_csp', '!=', 0)]}"/>
+                      attrs="{'invisible': ['|', ('state', 'in', ['closed']), '&amp;', ('balance', '&gt;', 0), ('diff_pa_csp', '!=', 0)]}"/>
                 <button name="print_return" string="Print" type="object"
                       attrs="{'invisible': [('state', 'in', ['draft', 'open'])]}"/>
                 <field name="state" widget="statusbar" statusbar_visible="draft,open,closed"/>
