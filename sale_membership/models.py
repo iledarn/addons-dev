@@ -18,7 +18,7 @@ class MemberLog(models.Model):
     partner_id = fields.Many2one('res.partner', string='Partner')
     member_type_id = fields.Many2one('sale_membership.type', string='New Membership Type')
     reason = fields.Char(string='Reason', help='Reason of membership change. But if blocked=True then reason of blocking')
-    blocked = fields.Boolean('Blocked', default='False')
+    blocked = fields.Boolean('Blocked', default=False)
 
 
 class Person(models.Model):
