@@ -43,9 +43,10 @@ class Vehicle(models.Model):
 
     @api.multi
     def _count_total_documents(self):
-        for rec in self:
-            docs_ids = self.env['fleet_rental.document'].search([('vehicle_id.id', '=', rec.id)])
-            rec.total_documents = len(docs_ids)
+        pass
+        # for rec in self:
+        #     docs_ids = self.env['fleet_rental.document'].search([('vehicle_id.id', '=', rec.id)])
+        #     rec.total_documents = len(docs_ids)
 
 
 class Service(models.Model):

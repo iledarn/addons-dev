@@ -35,7 +35,6 @@
         'security/fleet_rental_document_security.xml',
         'wizard/make_invoice.xml',
         'wizard/received_vehicle.xml',
-        "views/fleet_rental_document.xml",
         "views/fleet_rental_document_rent.xml",
         "views/fleet_rental_document_return.xml",
         "views/fleet_rental_document_extend.xml",

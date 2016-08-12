@@ -112,7 +112,6 @@
               </group>
               <group>
                 <group col="2" string="Rental Details">
-                  <field name="rent_return_datetime" invisible="1"/>
                   <field name="allowed_kilometer_per_day" readonly="1"/>
                   <field name="rate_per_extra_km" readonly="1"/>
                   <field name="daily_rental_price" readonly="1"/>
