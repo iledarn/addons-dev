@@ -133,7 +133,28 @@ class FleetRentalDocumentRent(models.Model):
 
     @api.multi
     def action_extend(self):
-        pass
+        document_extend_obj = self.env['fleet_rental.document_extend']
+        for rent in self:
+            document_extend = document_extend_obj.create({'document_rent_id': rent.id})
+        return self.action_view_document_extend(document_extend.id)
+
+    @api.multi
+    def action_view_document_extend(self, document_extend_id):
+        action = self.env.ref('fleet_rental_document.fleet_rental_document_extend_draft_act')
+        form_view_id = self.env.ref('fleet_rental_document.fleet_rental_document_extend_form').id
+
+        result = {
+            'name': action.name,
+            'help': action.help,
+            'type': action.type,
+            'views': [(form_view_id, 'form')],
+            'target': action.target,
+            # 'flags': {'form': {'action_buttons': True, 'options': {'mode': 'edit'}}},
+            'context': action.context,
+            'res_model': action.res_model,
+        }
+        result['res_id'] = document_extend_id
+        return result
 
     @api.multi
     def action_create_return(self):
@@ -175,23 +196,6 @@ class FleetRentalDocumentRent(models.Model):
             'views': [(form_view_id, 'form')],
             'target': action.target,
             # 'flags': {'form': {'action_buttons': True, 'options': {'mode': 'edit'}}},
-            'context': action.context,
-            'res_model': action.res_model,
-        }
-        result['res_id'] = document_return_id
-        return result
-
-    @api.multi
-    def action_view_document_extend(self, document_return_id):
-        action = self.env.ref('fleet_rental_document.fleet_rental_document_extend_act')
-        form_view_id = self.env.ref('fleet_rental_document.fleet_rental_document_extend_form').id
-
-        result = {
-            'name': action.name,
-            'help': action.help,
-            'type': action.type,
-            'views': [(form_view_id, 'form')],
-            'target': action.target,
             'context': action.context,
             'res_model': action.res_model,
         }

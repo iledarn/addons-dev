@@ -37,55 +37,13 @@
       <record id='fleet_rental_document_extend_form' model='ir.ui.view'>
         <field name="name">fleet.rental.document.extend.form</field>
         <field name="model">fleet_rental.document_extend</field>
+        <field name="mode">primary</field>
+        <field eval="7" name="priority"/>
+        <field name="inherit_id" ref="fleet_rental_document_rent_form"/>
         <field name="arch" type="xml">
-          <form string="Vehicle Rent Extend" create="false" delete="false">
-            <header>
-              <button name="action_submit" string="Submit"
-                      type="object" class="btn-primary"
-                      states="draft" />
-              <button name="%(action_view_make_invoice_wizard)d" string="Create Invoice"
-                      type="action" class="btn-primary"
-                      states="booked" />
-              <button name="action_confirm" string="Confirm Rental" type="object"
-                      attrs="{'invisible': ['|',('advanced_deposit', '&lt;=', 0),('state','!=','booked')]}"/>
-              <field name="state" widget="statusbar" statusbar_visible="draft,booked,confirmed"/>
-            </header>
-            <sheet>
-              <div class="oe_button_box" name="button_box">
-              </div>
-              <div class="oe_title">
-                <h1>
-                  <field name="name" readonly="1"/>
-                </h1>
-              </div>
-                <group>
-                    <field name="partner_id" readonly="1"/>
-                    <field name="vehicle_id" domain="[('state_id.name','=','Active'),('branch_id','=', user_branch_id)]" readonly="1"/>
-                </group>
-                <group>
-                    <group col="2" string="Vehicle Information">
-                        <field name="user_branch_id" invisible="True"/>
-                        <field name="daily_rental_price"/>
-                        <field name="rate_per_extra_km"/>
-                        <field name="allowed_kilometer_per_day"/>
-                        <field name="odometer_before"/>
-                        <field name="exit_datetime" class="oe_inline"/>
-                        <field name="return_datetime" class="oe_inline"/>
-                        <field name="extra_driver_charge_per_day" class="oe_inline"/>
-                        <field name="other_extra_charges" class="oe_inline"/>
-                    </group>
-                    <group col="2" string="Payment Details">
-                        <field name="period_rent_price" class="oe_inline"/>
-                        <field name="extra_driver_charge" class="oe_inline"/>
-                        <field name="total_rent_price" class="oe_inline"/>
-                        <field name="total_rental_period" class="oe_inline"/>
-                        <field name="advanced_deposit" class="oe_inline"/>
-                        <field name="balance" class="oe_inline"/>
-                    </group>
-                </group>
-                <field name="part_line_ids" widget="svg" svg_file="/fleet_rental_document/static/src/img/car-cutout.svg" svg_colors='red:broken;original:operative' svg_id_field="path_ID" svg_color_field="state"/>
-            </sheet>
-          </form>
+          <xpath expr="//field[@name='state']" position="replace">
+            <field name="state" widget="statusbar" statusbar_visible="draft,booked,confirmed"/>
+          </xpath>
         </field>
       </record>
 
