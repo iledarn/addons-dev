@@ -17,8 +17,6 @@ class FleetRentalDocumentReturn(models.Model):
                                        ondelete='restrict', required=True, auto_join=True)
     name = fields.Char(string='Agreement Number', required=True,
                        copy=False, readonly=True, index=True, default='New')
-    partner_id = fields.Many2one('res.partner', string="Customer",
-                                 domain=[('customer', '=', True)], required=True)
     state = fields.Selection([
         ('draft', 'Draft'),
         ('open', 'Open'),

@@ -236,7 +236,6 @@ class FleetRentalDocumentRent(models.Model):
         document_return_obj = self.env['fleet_rental.document_return']
         for rent in self:
             document_return = document_return_obj.create({'document_rent_id': rent.id,
-                                                          'partner_id': rent.partner_id.id,
                                                           'advanced_deposit': rent.advanced_deposit,
                                                           })
 
