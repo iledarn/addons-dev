@@ -30,9 +30,8 @@ class FleetRentalDocumentReturn(models.Model):
     origin = fields.Char(string='Source Document',
                          help="Reference of the document that produced this document.",
                          readonly=True, states={'draft': [('readonly', False)]})
-    invoice_ids = fields.Many2many("account.invoice", string='Invoices',
-                                   related="document_id.invoice_ids", readonly=True, copy=False)
-    invoice_count = fields.Integer(string='# of Invoices', related='document_id.invoice_count', readonly=True)
+    invoice_count = fields.Integer(string='# of Invoices', related='document_id.invoice_count',
+                                   readonly=True)
     rental_account_id = fields.Many2one('account.analytic.account',
                                         string='analytic account for rental', readonly=True,
                                         related='document_id.rental_account_id')
