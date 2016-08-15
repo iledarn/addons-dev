@@ -210,7 +210,8 @@ class FleetRentalDocumentRent(models.Model):
     def action_extend(self):
         document_extend_obj = self.env['fleet_rental.document_extend']
         for rent in self:
-            document_extend = document_extend_obj.create({'document_rent_id': rent.id})
+            document_extend = document_extend_obj.create({'document_rent_id': rent.id,
+                                                          'extra_driver_charge_per_day': rent.extra_driver_charge_per_day,})
         return self.action_view_document_extend(document_extend.id)
 
     @api.multi

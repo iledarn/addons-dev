@@ -39,6 +39,20 @@ class FleetRentalDocumentExtend(models.Model):
     rental_account_id = fields.Many2one('account.analytic.account',
                                         string='analytic account for rental', readonly=True,
                                         related='document_id.rental_account_id')
+    extra_driver_charge_per_day = fields.Float(string='Extra Driver Charge per day',
+                                               digits_compute=dp.get_precision('Product Price'),
+                                               default=0)
+    extra_driver_charge = fields.Float(string='Extra Driver Charge',
+                                       compute="_compute_extra_driver_charge", store=True,
+                                       digits_compute=dp.get_precision('Product Price'),
+                                       readonly=True)
+
+    @api.depends('total_rental_period', 'extra_driver_charge_per_day')
+    def _compute_extra_driver_charge(self):
+        for record in self:
+            if record.total_rental_period:
+                record.extra_driver_charge = record.total_rental_period * \
+                                             record.extra_driver_charge_per_day
 
     @api.model
     def create(self, vals):
