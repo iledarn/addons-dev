@@ -49,7 +49,7 @@ class FleetRentalCreateInvoiceWizard(models.TransientModel):
             name = _('Down Payment')
 
         if not document.rental_account_id:
-            document.rental_account_id = self.env['account.analytic.account'].sudo().create({'name': document.name + '_' + document.create_date, 'partner_id': document.partner_id.id}).id
+            document.document_id.rental_account_id = self.env['account.analytic.account'].sudo().create({'name': document.name + '_' + document.create_date, 'partner_id': document.partner_id.id}).id
 
         invoice = inv_obj.create({
             'name': document.name,
@@ -68,7 +68,7 @@ class FleetRentalCreateInvoiceWizard(models.TransientModel):
                 'uom_id': self.product_id.uom_id.id,
                 'product_id': self.product_id.id,
                 'fleet_rental_document_id': document.document_id.id,
-                'account_analytic_id': document.rental_account_id.id,
+                'account_analytic_id': document.document_id.rental_account_id.id,
             })],
         })
         return invoice

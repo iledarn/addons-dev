@@ -1,40 +1,21 @@
 # -*- coding: utf-8 -*-
 from openerp import models, fields, api
+import openerp.addons.decimal_precision as dp
 
 
 class FleetRentalDocument(models.Model):
     _name = 'fleet_rental.document'
 
-    name = fields.Char(string='Agreement Number', required=True,
-                       copy=False, readonly=True, index=True, default='New')
-    partner_id = fields.Many2one('res.partner', string="Customer",
-                                 domain=[('customer', '=', True)], required=True)
-    state = fields.Selection([
-        ('draft', 'Draft'),
-        ('booked', 'Booked'),
-        ('confirmed', 'Confirmed'),
-        ('extended', 'Extended'),
-        ('returned', 'Returned'),
-        ('cancel', 'Cancelled'),
-        ('open', 'Open'),
-        ('closed', 'Closed'),
-        ], string='Status', readonly=True, copy=False, index=True, default='draft')
-    type = fields.Selection([
-        ('rent', 'Rent'),
-        ('extend', 'Extend'),
-        ('return', 'Return'),
-        ], readonly=True, index=True, change_default=True)
-    origin = fields.Char(string='Source Document',
-                         help="Reference of the document that produced this document.",
-                         readonly=True, states={'draft': [('readonly', False)]})
-    invoice_ids = fields.Many2many("account.invoice", string='Invoices',
-                                   compute="_get_invoiced", readonly=True, copy=False)
-    invoice_count = fields.Integer(string='# of Invoices', compute='_get_invoiced', readonly=True)
     invoice_line_ids = fields.One2many('account.invoice.line', 'fleet_rental_document_id',
                                        string='Invoice Lines', copy=False)
     rental_account_id = fields.Many2one('account.analytic.account',
                                         string='analytic account for rental', readonly=True)
+    invoice_ids = fields.Many2many("account.invoice", string='Invoices',
+                                   compute="_get_invoiced", readonly=True, copy=False)
+    invoice_count = fields.Integer(string='# of Invoices', compute='_get_invoiced', readonly=True)
 
+    paid_amount = fields.Float(string='Paid Amount', compute="_compute_paid_amount", store=True,
+                               digits_compute=dp.get_precision('Product Price'), readonly=True)
     @api.multi
     def action_view_invoice(self):
         invoice_ids = self.mapped('invoice_ids')
@@ -77,6 +58,13 @@ class FleetRentalDocument(models.Model):
                 'invoice_count': len(set(invoice_ids.ids + refund_ids.ids)),
                 'invoice_ids': invoice_ids.ids + refund_ids.ids,
             })
+
+    @api.multi
+    @api.depends('rental_account_id.line_ids.move_id.balance_cash_basis')
+    def _compute_paid_amount(self):
+        for record in self:
+            for line in record.rental_account_id.mapped('line_ids').mapped('move_id'):
+                record.paid_amount += abs(line.balance_cash_basis)
 
     @api.multi
     def action_create_refund(self):

@@ -17,6 +17,27 @@ class FleetRentalDocumentRent(models.Model):
     document_id = fields.Many2one('fleet_rental.document',
                                   required=True, ondelete='restrict', auto_join=True)
 
+    name = fields.Char(string='Agreement Number', required=True,
+                       copy=False, readonly=True, index=True, default='New')
+    partner_id = fields.Many2one('res.partner', string="Customer",
+                                 domain=[('customer', '=', True)], required=True)
+    state = fields.Selection([
+        ('draft', 'Draft'),
+        ('booked', 'Booked'),
+        ('confirmed', 'Confirmed'),
+        ('extended', 'Extended'),
+        ('returned', 'Returned'),
+        ('cancel', 'Cancelled'),
+        ], string='Status', readonly=True, copy=False, index=True, default='draft')
+    type = fields.Selection([
+        ('rent', 'Rent'),
+        ('extend', 'Extend'),
+        ('return', 'Return'),
+        ], readonly=True, index=True, change_default=True)
+    origin = fields.Char(string='Source Document',
+                         help="Reference of the document that produced this document.",
+                         readonly=True, states={'draft': [('readonly', False)]})
+
     membership_type_id = fields.Many2one('sale_membership.type',
                                          related='partner_id.type_id', string='Membership')
     vehicle_id = fields.Many2one('fleet.vehicle', string="Vehicle", required=True)
@@ -50,7 +71,7 @@ class FleetRentalDocumentRent(models.Model):
                                        compute="_compute_extra_driver_charge", store=True,
                                        digits_compute=dp.get_precision('Product Price'),
                                        readonly=True)
-    advanced_deposit = fields.Float(string='Advanced Deposit', compute="_compute_advanced_deposit",
+    advanced_deposit = fields.Float(string='Advanced Deposit', related="document_id.paid_amount",
                                     store=True, digits_compute=dp.get_precision('Product Price'),
                                     readonly=True)
     balance = fields.Float(string='Balance', compute="_compute_balance", store=True,
@@ -144,14 +165,6 @@ class FleetRentalDocumentRent(models.Model):
             record.total_rent_price = record.period_rent_price + \
                                       record.extra_driver_charge + record.other_extra_charges
 
-    @api.multi
-    @api.depends('rental_account_id.line_ids.move_id.balance_cash_basis')
-    def _compute_advanced_deposit(self):
-        for record in self:
-            record.advanced_deposit = 0
-            for line in record.rental_account_id.mapped('line_ids').mapped('move_id'):
-                record.advanced_deposit += abs(line.balance_cash_basis)
-
     @api.depends('total_rent_price', 'advanced_deposit')
     def _compute_balance(self):
         for record in self:
@@ -224,7 +237,9 @@ class FleetRentalDocumentRent(models.Model):
         for rent in self:
             document_return = document_return_obj.create({'document_rent_id': rent.id,
                                                           'partner_id': rent.partner_id.id,
-                                                          'advanced_deposit': rent.advanced_deposit})
+                                                          'advanced_deposit': rent.advanced_deposit,
+                                                          })
+
         return self.action_view_document_return(document_return.id)
 
     @api.multi

@@ -8,14 +8,38 @@ import openerp.addons.decimal_precision as dp
 
 class FleetRentalDocumentReturn(models.Model):
     _name = 'fleet_rental.document_return'
-    _inherits = {'fleet_rental.document_rent': 'document_rent_id',
-                 'fleet_rental.document': 'document_id'}
+    _inherits = {'fleet_rental.document': 'document_id',
+                 'fleet_rental.document_rent': 'document_rent_id',}
 
     document_id = fields.Many2one('fleet_rental.document', required=True,
                                   ondelete='restrict', auto_join=True)
     document_rent_id = fields.Many2one('fleet_rental.document_rent',
-                                       ondelete='restrict', auto_join=True, required=True)
-    advanced_deposit = fields.Float(string='Advanced Deposit', readonly=True)
+                                       ondelete='restrict', required=True, auto_join=True)
+    name = fields.Char(string='Agreement Number', required=True,
+                       copy=False, readonly=True, index=True, default='New')
+    partner_id = fields.Many2one('res.partner', string="Customer",
+                                 domain=[('customer', '=', True)], required=True)
+    state = fields.Selection([
+        ('draft', 'Draft'),
+        ('open', 'Open'),
+        ('closed', 'Closed'),
+        ], string='Status', readonly=True, copy=False, index=True, default='draft')
+    type = fields.Selection([
+        ('rent', 'Rent'),
+        ('extend', 'Extend'),
+        ('return', 'Return'),
+        ], readonly=True, index=True, change_default=True)
+    origin = fields.Char(string='Source Document',
+                         help="Reference of the document that produced this document.",
+                         readonly=True, states={'draft': [('readonly', False)]})
+    invoice_ids = fields.Many2many("account.invoice", string='Invoices',
+                                   related="document_id.invoice_ids", readonly=True, copy=False)
+    invoice_count = fields.Integer(string='# of Invoices', related='document_id.invoice_count', readonly=True)
+    rental_account_id = fields.Many2one('account.analytic.account',
+                                        string='analytic account for rental', readonly=True,
+                                        related='document_id.rental_account_id')
+    advanced_deposit = fields.Float(string='Advanced Deposit',
+                                    digits_compute=dp.get_precision('Product Price'), readonly=True)
     balance = fields.Float(string='Balance', compute="_compute_balance", store=True,
                            digits_compute=dp.get_precision('Product Price'), readonly=True)
     total_rent_price = fields.Float(string='Total Rent Price', compute="_compute_total_rent_price",
@@ -28,7 +52,7 @@ class FleetRentalDocumentReturn(models.Model):
     returned_amount = fields.Float(string='Returned Amount', compute="_compute_returned_amount",
                                    store=True, digits_compute=dp.get_precision('Product Price'),
                                    readonly=True)
-    paid_amount = fields.Float(string='Paid Amount', compute="_compute_paid_amount", store=True,
+    paid_amount = fields.Float(string='Paid Amount', related="document_id.paid_amount",
                                digits_compute=dp.get_precision('Product Price'), readonly=True)
     diff_pa_csp = fields.Float(compute="_compute_diff_pa_csp")
     odometer_after = fields.Float(string='Odometer after Rent', related='vehicle_id.odometer')
@@ -109,14 +133,6 @@ class FleetRentalDocumentReturn(models.Model):
         for record in self:
             record.diff_pa_csp = record.customer_shall_pay - record.paid_amount
 
-    @api.multi
-    @api.depends('rental_account_id.line_ids.move_id.balance_cash_basis')
-    def _compute_paid_amount(self):
-        for record in self:
-            record.advanced_deposit = 0
-            for line in record.rental_account_id.mapped('line_ids').mapped('move_id'):
-                record.paid_amount += abs(line.balance_cash_basis)
-
     @api.depends('balance')
     def _compute_returned_amount(self):
         for record in self:
@@ -186,7 +202,3 @@ class FleetRentalDocumentReturn(models.Model):
     @api.multi
     def action_view_invoice(self):
         return self.mapped('document_id').action_view_invoice()
-
-    @api.depends('invoice_line_ids')
-    def _get_invoiced(self):
-        return self.mapped('document_id')._get_invoiced()
