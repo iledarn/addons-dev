@@ -86,6 +86,10 @@
           <xpath expr="//field[@name='return_datetime']" position="after">
             <field name="new_return_date"/>
           </xpath>
+          <xpath expr="//field[@name='total_rent_price']" position="after">
+            <field name="previous_deposit"/>
+            <field name="new_deposit"/>
+          </xpath>
         </field>
       </record>
 

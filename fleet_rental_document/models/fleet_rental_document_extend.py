@@ -61,6 +61,28 @@ class FleetRentalDocumentExtend(models.Model):
     total_rent_price = fields.Float(string='Total Rent Price', compute="_compute_total_rent_price",
                                     store=True, digits_compute=dp.get_precision('Product Price'),
                                     readonly=True)
+    previous_deposit = fields.Float(string='Previous Deposit',
+                                    related="document_rent_id.advanced_deposit",
+                                    store=True, digits_compute=dp.get_precision('Product Price'),
+                                    readonly=True)
+    new_deposit = fields.Float(string='New Deposit', related="document_id.paid_amount",
+                               store=True, digits_compute=dp.get_precision('Product Price'),
+                               readonly=True)
+    advanced_deposit = fields.Float(string='Advanced Deposit', compute="_compute_advanced_deposit",
+                                    store=True, digits_compute=dp.get_precision('Product Price'),
+                                    readonly=True)
+    balance = fields.Float(string='Balance', compute="_compute_balance", store=True,
+                           digits_compute=dp.get_precision('Product Price'), readonly=True)
+
+    @api.depends('total_rent_price', 'advanced_deposit')
+    def _compute_balance(self):
+        for record in self:
+            record.balance = record.total_rent_price - record.advanced_deposit
+
+    @api.depends('previous_deposit', 'new_deposit')
+    def _compute_advanced_deposit(self):
+        for record in self:
+            record.advanced_deposit = record.previous_deposit + record.new_deposit
 
     @api.depends('period_rent_price', 'extra_driver_charge', 'other_extra_charges')
     def _compute_total_rent_price(self):
@@ -96,6 +118,11 @@ class FleetRentalDocumentExtend(models.Model):
             vals['name'] = self.env['ir.sequence'].next_by_code('fleet_rental.document_extend') or 'New'
         result = super(FleetRentalDocumentExtend, self).create(vals)
         return result
+
+    @api.multi
+    def action_book(self):
+        for ext in self:
+            ext.state = 'booked'
 
     @api.multi
     def action_view_invoice(self):
