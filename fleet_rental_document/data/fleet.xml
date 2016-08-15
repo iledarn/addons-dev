@@ -1,10 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <openerp>
   <data>
-    <record id="fleet_rental_document.vehicle_state_inshop" model="fleet.vehicle.state">
-      <field name="name">In shop</field>
-      <field name="sequence">1</field>
-    </record>
     <record id="fleet_rental_document.vehicle_state_active" model="fleet.vehicle.state">
       <field name="name">Active</field>
       <field name="sequence">2</field>
