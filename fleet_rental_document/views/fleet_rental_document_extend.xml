@@ -56,6 +56,30 @@
           <xpath expr="//button[@id='extends_button']" position="attributes">
             <attribute name="invisible">1</attribute>
           </xpath>
+          <xpath expr="//field[@name='partner_id']" position="attributes">
+            <attribute name="readonly">1</attribute>
+          </xpath>
+          <xpath expr="//field[@name='vehicle_id']" position="attributes">
+            <attribute name="readonly">1</attribute>
+          </xpath>
+          <xpath expr="//field[@name='daily_rental_price']" position="attributes">
+            <attribute name="readonly">1</attribute>
+          </xpath>
+          <xpath expr="//field[@name='rate_per_extra_km']" position="attributes">
+            <attribute name="readonly">1</attribute>
+          </xpath>
+          <xpath expr="//field[@name='odometer_before']" position="attributes">
+            <attribute name="readonly">1</attribute>
+          </xpath>
+          <xpath expr="//field[@name='allowed_kilometer_per_day']" position="attributes">
+            <attribute name="readonly">1</attribute>
+          </xpath>
+          <xpath expr="//field[@name='exit_datetime']" position="attributes">
+            <attribute name="readonly">1</attribute>
+          </xpath>
+          <xpath expr="//field[@name='return_datetime']" position="attributes">
+            <attribute name="readonly">1</attribute>
+          </xpath>
         </field>
       </record>
 
