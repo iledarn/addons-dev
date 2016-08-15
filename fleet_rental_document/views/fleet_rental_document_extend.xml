@@ -83,6 +83,9 @@
           <xpath expr="//field[@name='extend_return_datetime']" position="attributes">
             <attribute name="invisible">1</attribute>
           </xpath>
+          <xpath expr="//field[@name='return_datetime']" position="after">
+            <field name="new_return_date"/>
+          </xpath>
         </field>
       </record>
 

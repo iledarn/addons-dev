@@ -2,7 +2,7 @@
 import openerp
 from openerp import models, fields, api
 from datetime import datetime, date, timedelta
-from openerp.tools import DEFAULT_SERVER_DATETIME_FORMAT as DTF
+from openerp.tools import DEFAULT_SERVER_DATE_FORMAT
 import openerp.addons.decimal_precision as dp
 
 
@@ -46,6 +46,42 @@ class FleetRentalDocumentExtend(models.Model):
                                        compute="_compute_extra_driver_charge", store=True,
                                        digits_compute=dp.get_precision('Product Price'),
                                        readonly=True)
+    new_return_date = fields.Date(string='New Return Date', required=True,
+                                  default=fields.Date.context_today)
+
+    total_rental_period = fields.Integer(string='Total Rental Period',
+                                         compute="_compute_total_rental_period",
+                                         store=True, readonly=True)
+    period_rent_price = fields.Float(string='Period Rent Price',
+                                     compute="_compute_period_rent_price", store=True,
+                                     digits_compute=dp.get_precision('Product Price'),
+                                     readonly=True)
+    other_extra_charges = fields.Float(string='Other Extra Charges',
+                                       digits_compute=dp.get_precision('Product Price'), default=0)
+    total_rent_price = fields.Float(string='Total Rent Price', compute="_compute_total_rent_price",
+                                    store=True, digits_compute=dp.get_precision('Product Price'),
+                                    readonly=True)
+
+    @api.depends('period_rent_price', 'extra_driver_charge', 'other_extra_charges')
+    def _compute_total_rent_price(self):
+        for record in self:
+            record.total_rent_price = record.period_rent_price + \
+                                      record.extra_driver_charge + record.other_extra_charges
+
+    @api.depends('daily_rental_price', 'total_rental_period')
+    def _compute_period_rent_price(self):
+        for record in self:
+            record.period_rent_price = record.total_rental_period * record.daily_rental_price
+
+    @api.depends('new_return_date')
+    def _compute_total_rental_period(self):
+        for record in self:
+            if record.exit_datetime and record.new_return_date:
+                start = datetime.strptime(record.exit_datetime.split()[0],
+                                          DEFAULT_SERVER_DATE_FORMAT)
+                end = datetime.strptime(record.new_return_date,
+                                        DEFAULT_SERVER_DATE_FORMAT)
+                record.total_rental_period = (end - start).days
 
     @api.depends('total_rental_period', 'extra_driver_charge_per_day')
     def _compute_extra_driver_charge(self):
