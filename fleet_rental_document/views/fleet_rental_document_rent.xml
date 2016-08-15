@@ -198,7 +198,7 @@
                 <field name="membership_type_id" options='{"no_open": True}'/>
               </group>
               <group string="Vehicle Information">
-                <field name="vehicle_id" domain="[('state_id.name','=','Active'),('branch_id','=', user_branch_id)]"
+                <field name="vehicle_id" domain="[('state_id.name','=','Available'),('branch_id','=', user_branch_id)]"
                        attrs="{'readonly': [('state', 'not in', ('draft'))]}" string="Brand / Model / Plate Number"/>
                 <field name="vehicle_color_id" options='{"no_open": True}'/>
               </group>

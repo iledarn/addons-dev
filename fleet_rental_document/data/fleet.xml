@@ -2,7 +2,7 @@
 <openerp>
   <data>
     <record id="fleet_rental_document.vehicle_state_active" model="fleet.vehicle.state">
-      <field name="name">Active</field>
+      <field name="name">Available</field>
       <field name="sequence">2</field>
     </record>
     <record id="fleet_rental_document.vehicle_state_inactive" model="fleet.vehicle.state">
