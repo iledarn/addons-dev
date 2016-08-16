@@ -87,11 +87,11 @@
               <p>Total Rental Period: <span t-field="doc.total_rental_period"/></p>
             </div>
           </div>
-          <div class="row">
+          <div class="row" id="vehicle_parts">
             <h4>Vehicle status</h4>
             <p class="text-center"><img t-att-src="'data:image/png;base64,%s' % doc.png_file" style="width:50%;heght:auto;"/></p>
           </div>
-          <div class="row">
+          <div class="row" id="checklist">
             <table class="table table-condensed">
               <thead>
                 <tr>

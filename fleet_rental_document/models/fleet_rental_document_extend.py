@@ -123,5 +123,9 @@ class FleetRentalDocumentExtend(models.Model):
             ext.state = 'confirmed'
 
     @api.multi
+    def print_extend(self):
+        return self.env['report'].get_action(self, 'fleet_rental_document.report_extend')
+
+    @api.multi
     def action_view_invoice(self):
         return self.mapped('document_id').action_view_invoice()

@@ -44,6 +44,7 @@
         'rent_report.xml',
         'views/report_rent.xml',
         'views/report_return.xml',
+        'views/report_extend.xml',
     ],
     "qweb": [
     ],

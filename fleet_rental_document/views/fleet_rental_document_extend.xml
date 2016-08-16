@@ -61,6 +61,10 @@
             <button name="%(action_view_make_invoice_wizard)d" string="Create Invoice"
                     type="action" class="btn-primary" />
           </xpath>
+          <xpath expr="//button[@name='print_rent']" position="replace">
+              <button name="print_extend" string="Print" type="object"
+                      attrs="{'invisible': [('state', 'in', ['draft'])]}"/>
+          </xpath>
           <xpath expr="//notebook/page[1]" position="attributes">
             <attribute name="invisible">1</attribute>
           </xpath>
