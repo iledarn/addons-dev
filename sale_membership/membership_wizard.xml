@@ -26,7 +26,7 @@
       </field>
     </record>
 
-    <record id="action_view_received_vehicle_wizard" model="ir.actions.act_window">
+    <record id="action_view_manage_membership_wizard" model="ir.actions.act_window">
       <field name="name">Manage Membership</field>
       <field name="type">ir.actions.act_window</field>
       <field name="res_model">sale_membership.membership_wizard</field>
@@ -35,7 +35,7 @@
       <field name="target">new</field>
     </record>
 
-    <menuitem action="action_view_received_vehicle_wizard" parent="base.menu_sales" id="sale_manage_membership_menu" sequence="2"/>
+    <menuitem action="action_view_manage_membership_wizard" parent="base.menu_sales" id="sale_manage_membership_menu" sequence="2"/>
 
   </data>
 </openerp>
