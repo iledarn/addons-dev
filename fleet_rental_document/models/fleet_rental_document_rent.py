@@ -52,10 +52,12 @@ class FleetRentalDocumentRent(models.Model):
                                                default=0)
     other_extra_charges = fields.Float(string='Other Extra Charges',
                                        digits_compute=dp.get_precision('Product Price'), default=0)
-    exit_datetime = fields.Datetime(string='Exit Date and Time', required=True)
-    return_datetime = fields.Datetime(string='Return Date and Time', required=True)
-    extend_return_datetime = fields.Datetime(string='Last extend return time',
-                                             help='Last extend document return Date and Time',
+    exit_datetime = fields.Datetime(string='Exit Date and Time', required=True,
+                                    default=fields.Datetime.now)
+    return_date = fields.Date(string='Return Date', required=True,
+                                  default=fields.Datetime.to_string(datetime.utcnow() + timedelta(days=1)))
+    extend_return_date = fields.Date(string='Last extend return date',
+                                             help='Last extend document return Date',
                                              default=False, readonly=True)
     total_rental_period = fields.Integer(string='Total Rental Period',
                                          compute="_compute_total_rental_period",
@@ -131,18 +133,16 @@ class FleetRentalDocumentRent(models.Model):
 
         result['check_line_ids'] = [(5, 0, 0)] + [(0, 0, {'item_id': item.id, 'exit_check_yes': False, 'exit_check_no': False, 'exit_check_yes': False, 'exit_check_no': False,}) for item in items]
         result['part_line_ids'] = [(5, 0, 0)] + [(0, 0, {'part_id': part.id, 'path_ID': part.path_ID}) for part in parts]
-        result['exit_datetime'] = fields.Datetime.now()
-        result['return_datetime'] = fields.Datetime.to_string(datetime.utcnow() + timedelta(days=1))
         return result
 
     @api.multi
-    @api.depends('exit_datetime', 'return_datetime')
+    @api.depends('exit_datetime', 'return_date')
     def _compute_total_rental_period(self):
         for record in self:
-            if record.exit_datetime and record.return_datetime:
+            if record.exit_datetime and record.return_date:
                 start = datetime.strptime(record.exit_datetime.split()[0],
                                           DEFAULT_SERVER_DATE_FORMAT)
-                end = datetime.strptime(record.return_datetime.split()[0],
+                end = datetime.strptime(record.return_date,
                                         DEFAULT_SERVER_DATE_FORMAT)
                 record.total_rental_period = (end - start).days
 
@@ -238,10 +238,15 @@ class FleetRentalDocumentRent(models.Model):
     def action_create_return(self):
         document_return_obj = self.env['fleet_rental.document_return']
         for rent in self:
+            last_extend = self.env['fleet_rental.document_extend'].search([
+                ('document_rent_id', '=', rent.id),
+                ('state', '=', 'confirmed')],
+                order='new_return_date desc', limit=1)
             document_return = document_return_obj.create({'document_rent_id': rent.id,
-                                                          'advanced_deposit': rent.advanced_deposit,
-                                                          })
-
+                                                          'advanced_deposit': last_extend and \
+                                                          last_extend.advanced_deposit or \
+                                                          rent.advanced_deposit,
+                                                      })
         return self.action_view_document_return(document_return.id)
 
     @api.multi

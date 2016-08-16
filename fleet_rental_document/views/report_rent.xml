@@ -79,7 +79,7 @@
               <p>Exit Time: <span t-field="doc.exit_datetime" t-field-options='{"format":"HH:mm"}'/></p>
             </div>
             <div class="col-xs-4">
-              <p>End Date: <span t-field="doc.return_datetime" t-field-options='{"widget":"date","format":"short"}'/></p>
+              <p>End Date: <span t-field="doc.return_date" t-field-options='{"widget":"date","format":"short"}'/></p>
             </div>
           </div>
           <div class="row">

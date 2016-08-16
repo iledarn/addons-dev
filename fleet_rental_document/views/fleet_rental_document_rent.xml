@@ -18,7 +18,7 @@
             <field name="partner_id"/>
             <field name="vehicle_id"/>
             <field name="exit_datetime"/>
-            <field name="return_datetime"/>
+            <field name="return_date"/>
             <field name="total_rental_period"/>
           </tree>
         </field>
@@ -151,7 +151,7 @@
               <button name="action_book" string="Book Only"
                       attrs="{'invisible': ['|', '|', '|', '|',
                              ('exit_datetime', '=', False),
-                             ('return_datetime', '=', False),
+                             ('return_date', '=', False),
                              ('partner_id', '=', False),
                              ('vehicle_id', '=', False),
                              ('state', '!=', 'draft')]}"
@@ -210,8 +210,8 @@
                   <field name="allowed_kilometer_per_day" attrs="{'readonly': [('state', 'not in', ('draft','booked'))]}"/>
                   <field name="odometer_before"/>
                   <field name="exit_datetime" class="oe_inline" attrs="{'readonly': [('state', 'not in', ('draft','booked'))]}"/>
-                  <field name="return_datetime" class="oe_inline" string="Original return time" attrs="{'readonly': [('state', 'not in', ('draft','booked'))]}"/>
-                  <field name="extend_return_datetime" class="oe_inline" string="Extended return time"/>
+                  <field name="return_date" class="oe_inline" string="Original return date" attrs="{'readonly': [('state', 'not in', ('draft','booked'))]}"/>
+                  <field name="extend_return_date" class="oe_inline" string="Extended return date"/>
                   <field name="total_rental_period" class="oe_inline"/>
                   <field name="extra_driver_charge_per_day" class="oe_inline" attrs="{'readonly': [('state', 'not in', ('draft','booked'))]}"/>
                   <field name="other_extra_charges" class="oe_inline" attrs="{'readonly': [('state', 'not in', ('draft','booked'))]}"/>

@@ -87,19 +87,31 @@ class FleetRentalDocumentReturn(models.Model):
                                         digits_compute=dp.get_precision('Product Price'),
                                         readonly=True)
 
-    @api.multi
+
+    @api.one
     @api.depends('return_datetime')
     def _compute_extra_hours(self):
-        for record in self:
-            if record.return_datetime and (record.document_rent_id.return_datetime < record.return_datetime):
-                start = datetime.strptime(record.document_rent_id.return_datetime, DTF)
-                end = datetime.strptime(record.return_datetime, DTF)
-                extra_hours = (end - start).days * 24 + (end - start).seconds/3600
-                record.extra_hours = extra_hours
-                record.extra_hours_charge = (record.daily_rental_price / 24) * extra_hours
+        if self.return_datetime:
+            start = datetime.strptime(self.document_rent_id.exit_datetime, DTF)
+            end = datetime.strptime(self.return_datetime, DTF)
+            days = (end - start).days
+            if self.document_rent_id.extend_return_date:
+                return_date = datetime.strptime(self.document_rent_id.extend_return_date,
+                                                       DEFAULT_SERVER_DATE_FORMAT)
             else:
-                record.extra_hours = 0
-                record.extra_hours_charge = 0
+                return_date = datetime.strptime(self.document_rent_id.return_date,
+                                                       DEFAULT_SERVER_DATE_FORMAT)
+
+            exit_date = datetime.strptime(self.exit_datetime.split()[0],
+                                             DEFAULT_SERVER_DATE_FORMAT)
+            days = days - (return_date - exit_date).days
+            extra_hours = days * 24 + (end - start).seconds/3600
+            if extra_hours > 0:
+                self.extra_hours = extra_hours
+                self.extra_hours_charge = (self.daily_rental_price / 24) * extra_hours
+            else:
+                self.extra_hours = 0
+                self.extra_hours_charge = 0
 
     @api.multi
     @api.depends('vehicle_id.odometer', 'total_rental_period', 'odometer_after')

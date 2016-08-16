@@ -20,7 +20,7 @@ class FleetRentalCreateInvoiceWizard(models.TransientModel):
         elif model == 'fleet_rental.document_extend':
             last_extend = self.env['fleet_rental.document_extend'].search([
                 ('document_rent_id', '=', document.document_rent_id.id),
-                ('state', '=', 'confirmed')], order='create_date desc', limit=1)
+                ('state', '=', 'confirmed')], order='new_return_date desc', limit=1)
             retval = last_extend and document.total_rent_price - last_extend.total_rent_price or \
                      document.total_rent_price - document.document_rent_id.total_rent_price
         return retval

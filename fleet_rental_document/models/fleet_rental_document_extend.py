@@ -20,11 +20,7 @@ class FleetRentalDocumentExtend(models.Model):
                        copy=False, readonly=True, index=True, default='New')
     state = fields.Selection([
         ('draft', 'Draft'),
-        ('booked', 'Booked'),
         ('confirmed', 'Confirmed'),
-        ('extended', 'Extended'),
-        ('returned', 'Returned'),
-        ('cancel', 'Cancelled'),
         ], string='Status', readonly=True, copy=False, index=True, default='draft')
     type = fields.Selection([
         ('rent', 'Rent'),
@@ -120,9 +116,11 @@ class FleetRentalDocumentExtend(models.Model):
         return result
 
     @api.multi
-    def action_book(self):
+    def action_confirm(self):
         for ext in self:
-            ext.state = 'booked'
+            ext.document_rent_id.sudo().state = 'extended'
+            ext.document_rent_id.sudo().extend_return_date = ext.new_return_date
+            ext.state = 'confirmed'
 
     @api.multi
     def action_view_invoice(self):

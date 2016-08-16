@@ -12,7 +12,7 @@
             <field name="partner_id"/>
             <field name="vehicle_id"/>
             <field name="exit_datetime"/>
-            <field name="return_datetime"/>
+            <field name="return_date"/>
             <field name="total_rental_period"/>
           </tree>
         </field>
@@ -28,7 +28,7 @@
             <field name="partner_id"/>
             <field name="vehicle_id"/>
             <field name="exit_datetime"/>
-            <field name="return_datetime"/>
+            <field name="return_date"/>
             <field name="total_rental_period"/>
           </tree>
         </field>
@@ -42,7 +42,24 @@
         <field name="inherit_id" ref="fleet_rental_document_rent_form"/>
         <field name="arch" type="xml">
           <xpath expr="//field[@name='state']" position="replace">
-            <field name="state" widget="statusbar" statusbar_visible="draft,booked,confirmed"/>
+            <field name="state" widget="statusbar" statusbar_visible="draft,confirmed"/>
+          </xpath>
+          <xpath expr="//button[@name='action_book']" position="attributes">
+            <attribute name="invisible">1</attribute>
+          </xpath>
+          <xpath expr="//button[@name='action_extend']" position="attributes">
+            <attribute name="invisible">1</attribute>
+          </xpath>
+          <xpath expr="//button[@name='action_create_return']" position="attributes">
+            <attribute name="invisible">1</attribute>
+          </xpath>
+          <xpath expr="//button[@name='action_confirm']" position="replace">
+            <button name="action_confirm" string="Confirm Rental" type="object"
+                    attrs="{'invisible': ['|', ('state', '=', 'confirmed'), ('new_deposit', '&lt;=', 0)]}"/>
+          </xpath>
+          <xpath expr="//button[@name='%(action_view_make_invoice_wizard)d']" position="replace">
+            <button name="%(action_view_make_invoice_wizard)d" string="Create Invoice"
+                    type="action" class="btn-primary" />
           </xpath>
           <xpath expr="//notebook/page[1]" position="attributes">
             <attribute name="invisible">1</attribute>
@@ -77,18 +94,19 @@
           <xpath expr="//field[@name='exit_datetime']" position="attributes">
             <attribute name="readonly">1</attribute>
           </xpath>
-          <xpath expr="//field[@name='return_datetime']" position="attributes">
+          <xpath expr="//field[@name='return_date']" position="attributes">
             <attribute name="readonly">1</attribute>
           </xpath>
-          <xpath expr="//field[@name='extend_return_datetime']" position="attributes">
+          <xpath expr="//field[@name='extend_return_date']" position="attributes">
             <attribute name="invisible">1</attribute>
           </xpath>
-          <xpath expr="//field[@name='return_datetime']" position="after">
+          <xpath expr="//field[@name='return_date']" position="after">
             <field name="new_return_date"/>
           </xpath>
           <xpath expr="//field[@name='total_rent_price']" position="after">
             <field name="previous_deposit"/>
             <field name="new_deposit"/>
+            <field name="document_rent_id" invisible="1"/>
           </xpath>
         </field>
       </record>
