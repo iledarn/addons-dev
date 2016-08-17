@@ -1,18 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
 <openerp>
-<data>
-<record id="sale_membership_view_partner_person_form_inherit" model="ir.ui.view">
-    <field name="name">membership.form.inherit</field>
-    <field name="model">res.partner</field>
-    <field name="inherit_id" ref="base.view_partner_form"/>
-    <field name="arch" type="xml">
+  <data>
+
+    <record id="sale_membership_view_partner_person_form_inherit" model="ir.ui.view">
+      <field name="name">membership.form.inherit</field>
+      <field name="model">res.partner</field>
+      <field name="inherit_id" ref="base.view_partner_form"/>
+      <field name="arch" type="xml">
         <data>
-            <xpath expr="//page[@name='sales_purchases']/group/group[@name='sale']" position="inside">
-                <field name='type_id' string="Membership"/>
-                <field name='blocked' string="Blocked"/>
-            </xpath>
+          <xpath expr="//page[@name='sales_purchases']/group/group[@name='sale']" position="inside">
+            <field name='type_id' string="Membership"/>
+            <field name='blocked' string="Blocked"/>
+          </xpath>
         </data>
-    </field>
-</record>
-</data>
+      </field>
+    </record>
+
+    <record id="view_res_partner_filter" model="ir.ui.view">
+      <field name="name">res.partner.select</field>
+      <field name="model">res.partner</field>
+      <field name="inherit_id" ref="base.view_res_partner_filter"/>
+      <field name="arch" type="xml">
+        <xpath expr="//filter[@name='customer']" position="after">
+          <filter string="Blacklist" name="blacklist" domain="[('blocked', '=', True)]"/>
+        </xpath>
+      </field>
+    </record>
+
+    <record id="action_partner_blacklist_form" model="ir.actions.act_window">
+      <field name="name">Blacklist</field>
+      <field name="type">ir.actions.act_window</field>
+      <field name="res_model">res.partner</field>
+      <field name="view_type">form</field>
+      <field name="view_mode">tree,form</field>
+      <field name="context">{"search_default_blacklist":1}</field>
+      <field name="search_view_id" ref="view_res_partner_filter"/>
+    </record>
+
+    <menuitem action="action_partner_blacklist_form" parent="base.menu_sale_config" id="sale_blacklist_menu" sequence="11"/>
+
+  </data>
 </openerp>
