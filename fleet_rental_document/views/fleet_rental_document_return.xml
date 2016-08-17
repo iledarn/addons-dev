@@ -165,5 +165,16 @@
         </field>
       </record>
 
+      <record id="view_document_return_filter" model="ir.ui.view">
+        <field name="name">fleet_rental.document_return.select</field>
+        <field name="model">fleet_rental.document_return</field>
+        <field name="arch" type="xml">
+          <search string="Search Document">
+            <field name="name"/>
+            <field name="license_plate"/>
+          </search>
+        </field>
+      </record>
+
     </data>
 </openerp>
