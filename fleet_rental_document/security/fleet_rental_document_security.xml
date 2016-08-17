@@ -2,6 +2,11 @@
 <openerp>
   <data noupdate="0">
 
+    <record id="group_fleet_rental_extra_menus" model="res.groups">
+        <field name="name">Fleet Rental Extra Menus</field>
+        <field name="category_id" ref="base.module_category_hidden"/>
+    </record>
+
     <record id="fleet_rental_document_deletion" model="ir.rule">
       <field name="name">Only draft rent documents can be deleted</field>
       <field name="model_id" ref="model_fleet_rental_document_rent"/>
