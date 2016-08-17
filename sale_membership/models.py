@@ -16,8 +16,10 @@ class MemberLog(models.Model):
     _name = 'sale_membership.log'
 
     partner_id = fields.Many2one('res.partner', string='Partner')
-    member_type_id = fields.Many2one('sale_membership.type', string='New Membership Type', ondelete="restrict")
-    reason = fields.Char(string='Reason', help='Reason of membership change. But if blocked=True then reason of blocking')
+    member_type_id = fields.Many2one('sale_membership.type', string='New Membership Type',
+                                     ondelete="restrict")
+    reason = fields.Text(string='Reason',
+                         help='Reason of membership change, if blocked=True then blocking reason')
     blocked = fields.Boolean('Blocked', default=False)
 
 
@@ -26,8 +28,10 @@ class Person(models.Model):
     _inherit = 'res.partner'
 
     points = fields.Float(string='Current membership Points', default=0, readonly=True)
-    demoting_offset = fields.Integer(help='this value will be raised each time on demotion by number of demoting type points', default=0, readonly=True)
-    type_id = fields.Many2one('sale_membership.type', compute='set_membership', string='Current Membership type', store=True, readonly=True, ondelete="restrict")
+    demoting_offset = fields.Integer(help='demoting points', default=0, readonly=True)
+    type_id = fields.Many2one('sale_membership.type', compute='set_membership',
+                              string='Current Membership type', store=True, readonly=True,
+                              ondelete="restrict")
     blocked = fields.Boolean(default=False, string='Blocked', readonly=True)
 
     @api.one

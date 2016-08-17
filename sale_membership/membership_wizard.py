@@ -15,8 +15,8 @@ class MembershipWizard(models.TransientModel):
             ('demote','Demote'),
         ])
 
-    demoting_reason = fields.Char(string='Demoting reason')
-    blocking_reason = fields.Char(string='Blocking reason')
+    demoting_reason = fields.Text(string='Demoting reason')
+    blocking_reason = fields.Text(string='Blocking reason')
 
     @api.one
     @api.constrains('new_membership_type_id')
