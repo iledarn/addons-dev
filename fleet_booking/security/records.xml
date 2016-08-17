@@ -110,5 +110,17 @@
             <field name="perm_create" eval="True"/>
             <field name="perm_unlink" eval="True"/>
         </record>
+
+        <record id="fleet_booking_rule_bo_r" model="ir.rule">
+          <field name="name">Fleet User (BO) may only see logs created in his branch</field>
+          <field name="model_id" ref="sale_membership.model_sale_membership_log"/>
+          <field name="groups" eval="[(4, ref('fleet.group_fleet_user'))]"/>
+          <field name="perm_read" eval="True"/>
+          <field name="perm_write" eval="False"/>
+          <field name="perm_create" eval="False"/>
+          <field name="perm_unlink" eval="False"/>
+          <field name="domain_force">[('create_uid.branch_id', '=', user.branch_id.id)]</field>
+        </record>
+
     </data>
 </openerp>
