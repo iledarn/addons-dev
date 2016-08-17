@@ -19,7 +19,7 @@
             </group>
           </sheet>
           <footer>
-            <button name="action_create" string="Receive" type="object"
+            <button name="action_create" string="Apply" type="object"
                     attrs="{'invisible': ['|',('document_rent', '=', False),('vehicle', '=', False)]}"/>
           </footer>
         </form>
