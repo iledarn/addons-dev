@@ -12,9 +12,10 @@ class FleetRentalCreateInvoiceWizard(models.TransientModel):
     def _default_product(self):
         model = self._context.get('active_model')
         if model in ['fleet_rental.document_rent', 'fleet_rental.document_extend']:
-            return self.env.user.branch_id.deposit_product_id
+            res = self.env.user.branch_id.deposit_product_id.id
         elif model == 'fleet_rental.document_return':
-            return self.env.user.branch_id.rental_product_id
+            res = self.env.user.branch_id.rental_product_id.id
+        return res
 
     @api.model
     def _default_amount(self):
@@ -37,7 +38,6 @@ class FleetRentalCreateInvoiceWizard(models.TransientModel):
                           help="The amount to be invoiced in advance.",
                           default=_default_amount)
     product_id = fields.Many2one('product.product', string='Payment Product',
-                                 domain=[('type', '=', 'service')],
                                  default=_default_product)
 
     @api.multi
@@ -54,13 +54,9 @@ class FleetRentalCreateInvoiceWizard(models.TransientModel):
                     (self.product_id.name,))
 
         if self.amount <= 0.00:
-            raise UserError(_('The value of the down payment amount must be positive.'))
-        if self.advance_payment_method == 'percentage':
-            amount = document.period_rent_price * self.amount / 100
-            name = _("Down payment of %s%%") % (self.amount,)
-        else:
-            amount = self.amount
-            name = _('Down Payment')
+            raise UserError(_('The value of the payment amount must be positive.'))
+
+        amount = self.amount
 
         if not document.rental_account_id:
             document.document_id.rental_account_id = self.env['account.analytic.account'].sudo().create({'name': document.name + '_' + document.create_date, 'partner_id': document.partner_id.id}).id
@@ -73,7 +69,7 @@ class FleetRentalCreateInvoiceWizard(models.TransientModel):
             'account_id': document.partner_id.property_account_receivable_id.id,
             'partner_id': document.partner_id.id,
             'invoice_line_ids': [(0, 0, {
-                'name': name,
+                'name': self.product_id.name,
                 'origin': document.name,
                 'account_id': account_id,
                 'price_unit': amount,
@@ -96,14 +92,7 @@ class FleetRentalCreateInvoiceWizard(models.TransientModel):
             self.product_id = self._create_product()
 
         for document in documents:
-            if self.advance_payment_method == 'percentage':
-                amount = document.period_rent_price * self.amount / 100
-            else:
-
-                amount = self.amount
-            if self.product_id.type != 'service':
-                raise UserError(_("The product used to invoice a down payment should be of type 'Service'. Please use another product or update this product."))
-
+            amount = self.amount
             self._create_invoice(document, amount)
 
         if self._context.get('open_invoices', False):
@@ -124,4 +113,9 @@ class FleetRentalCreateInvoiceWizard(models.TransientModel):
             'invoice_policy': 'order',
             'property_account_income_id': account_income_id,
         }
-        return self.env['product.product'].create(vals)
+        product = self.env['product.product'].create(vals)
+        if model == 'fleet_rental.document_return':
+            self.env.user.branch_id.rental_product_id = product.id
+        else:
+            self.env.user.branch_id.deposit_product_id = product.id
+        return product

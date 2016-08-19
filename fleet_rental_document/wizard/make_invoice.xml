@@ -13,6 +13,7 @@
           </p>
           <group>
             <field name="amount" class="oe_inline" widget="monetary"/>
+            <field name="product_id" invisible="1"/>
           </group>
           <footer>
             <button name="create_invoices" string="Create and View Invoices" type="object"
