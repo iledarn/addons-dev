@@ -18,8 +18,9 @@
     ],
     "external_dependencies": {"python": [], "bin": []},
     "data": [
-        "views.xml",
+        "views/fleet_branch.xml",
         "security/fleet_branch.xml",
+        'security/ir.model.access.csv',
     ],
     "qweb": [
     ],
