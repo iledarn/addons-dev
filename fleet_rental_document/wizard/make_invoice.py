@@ -9,6 +9,14 @@ class FleetRentalCreateInvoiceWizard(models.TransientModel):
     _name = "fleet_rental.create_invoice_wizard"
 
     @api.model
+    def _default_product(self):
+        model = self._context.get('active_model')
+        if model in ['fleet_rental.document_rent', 'fleet_rental.document_extend']:
+            return self.env.user.branch_id.deposit_product_id
+        elif model == 'fleet_rental.document_return':
+            return self.env.user.branch_id.rental_product_id
+
+    @api.model
     def _default_amount(self):
         model = self._context.get('active_model')
         document = self.env[model].browse(self._context.get('active_id'))
@@ -25,17 +33,12 @@ class FleetRentalCreateInvoiceWizard(models.TransientModel):
                      document.total_rent_price - document.document_rent_id.total_rent_price
         return retval
 
-    amount = fields.Float('Down Payment Amount', digits=dp.get_precision('Account'),
+    amount = fields.Float('Payment Amount', digits=dp.get_precision('Account'),
                           help="The amount to be invoiced in advance.",
                           default=_default_amount)
-    deposit_account_id = fields.Many2one("account.account", string="Income Account", domain=[('deprecated', '=', False)],\
-        help="Account used for deposits")
-    product_id = fields.Many2one('product.product', string='Down Payment Product', domain=[('type', '=', 'service')],\
-        default=lambda self: self.env['ir.values'].get_default('sale.config.settings', 'deposit_product_id_setting'))
-    advance_payment_method = fields.Selection([
-        ('percentage', 'Down payment (percentage)'),
-        ('fixed', 'Down payment (fixed amount)')
-        ], string='What do you want to invoice?', default='fixed', required=True)
+    product_id = fields.Many2one('product.product', string='Payment Product',
+                                 domain=[('type', '=', 'service')],
+                                 default=_default_product)
 
     @api.multi
     def _create_invoice(self, document, amount):
@@ -88,11 +91,9 @@ class FleetRentalCreateInvoiceWizard(models.TransientModel):
     def create_invoices(self):
         documents = self.env[self._context.get('active_model')].browse(self._context.get('active_ids', []))
 
-        # Create deposit product if necessary
+        # Create product if necessary
         if not self.product_id:
-            vals = self._prepare_deposit_product()
-            self.product_id = self.env['product.product'].create(vals)
-            self.env['ir.values'].sudo().set_default('sale.config.settings', 'deposit_product_id_setting', self.product_id.id)
+            self.product_id = self._create_product()
 
         for document in documents:
             if self.advance_payment_method == 'percentage':
@@ -109,10 +110,18 @@ class FleetRentalCreateInvoiceWizard(models.TransientModel):
             return documents.action_view_invoice()
         return {'type': 'ir.actions.act_window_close'}
 
-    def _prepare_deposit_product(self):
-        return {
-            'name': 'Down payment',
+    def _create_product(self):
+        model = self._context.get('active_model')
+        name = 'Rent payment' if model == 'fleet_rental.document_return' \
+               else "Down payment"
+        name = name + ' ' + self.env.user.branch_id.name
+        account_income_id = self.env.user.branch_id.rental_account_id.id \
+                            if model == 'fleet_rental.document_return' else \
+                            self.env.user.branch_id.deposit_account_id.id
+        vals = {
+            'name': name,
             'type': 'service',
             'invoice_policy': 'order',
-            'property_account_income_id': self.deposit_account_id.id,
+            'property_account_income_id': account_income_id,
         }
+        return self.env['product.product'].create(vals)
