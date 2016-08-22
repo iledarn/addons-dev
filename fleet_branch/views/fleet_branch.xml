@@ -26,6 +26,8 @@
               <field name="branch_officer_ids" widget="many2many_tags" readonly="True"/>
             </group>
             <group string="Accounting">
+              <field name="cash_account_id"/>
+              <field name="bank_account_id"/>
               <field name="deposit_account_id"/>
               <field name="rental_account_id"/>
             </group>

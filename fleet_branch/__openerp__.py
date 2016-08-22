@@ -20,6 +20,7 @@
     "external_dependencies": {"python": [], "bin": []},
     "data": [
         "views/fleet_branch.xml",
+        "data/ir_sequence.xml",
         "security/fleet_branch.xml",
         'security/ir.model.access.csv',
     ],
