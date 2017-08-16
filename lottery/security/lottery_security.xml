@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+	<record id="module_category_lottery" model="ir.module.category">
+		<field name="name">Lottery</field>
+		<field name="sequence">18</field>
+	</record>
+
+        <record id="group_reporter" model="res.groups">
+            <field name="name">Reporter</field>
+            <field name="category_id" ref="module_category_lottery"/>
+        </record>
+
+        <record id="group_archiver" model="res.groups">
+            <field name="name">Archiver</field>
+            <field name="category_id" ref="module_category_lottery"/>
+            <field name="implied_ids" eval="[(4, ref('lottery.group_reporter'))]"/>
+        </record>
+
+        <record id="group_game_manager" model="res.groups">
+            <field name="name">Game manager</field>
+            <field name="category_id" ref="module_category_lottery"/>
+            <field name="implied_ids" eval="[(4, ref('lottery.group_archiver'))]"/>
+        </record>
+
+        <record id="group_game_administrator" model="res.groups">
+            <field name="name">Game administrator</field>
+            <field name="category_id" ref="module_category_lottery"/>
+            <field name="implied_ids" eval="[(4, ref('lottery.group_game_manager'))]"/>
+        </record>
+
+        <record id="group_lottery_administrator" model="res.groups">
+            <field name="name">Lottery administrator</field>
+            <field name="category_id" ref="module_category_lottery"/>
+            <field name="implied_ids" eval="[(4, ref('lottery.group_game_administrator')),
+                    (4, ref('base.group_multi_company'))]"/>
+        </record>
+
+</odoo>
